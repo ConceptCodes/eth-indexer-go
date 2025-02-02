@@ -16,6 +16,10 @@ This project was built purely for fun and experimentation in my free time. If yo
 
 
 ## Roadmap
+- [ ] Add authentication for the API
+- [ ] Add an Etherscan-Like UI to view indexed data
+- [ ] Setup my own Ethereum node using Geth/Erigon
+- [ ] Add Support for other EVM chains
 
 ## Setup
 
