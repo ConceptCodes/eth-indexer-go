@@ -81,6 +81,8 @@ curl -X GET \
 }
 ```
 
+---
+
 **Get Block by Number**
 
 ```bash
