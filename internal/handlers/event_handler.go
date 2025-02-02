@@ -31,23 +31,22 @@ func NewEventHandler(
 	}
 }
 
-func (h *EventHandler) GetEventLogsByTransactionHashHandler(w http.ResponseWriter, r *http.Request) {
+func (h *EventHandler) GetEventLogsByAddressHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	transactionHash := vars["transactionHash"]
+	address := vars["address"]
 
-	if transactionHash == "" {
+	if address == "" {
 		h.responseHelper.SendErrorResponse(w, "Transaction Hash is required", constants.BadRequest, nil)
 		return
 	}
 
-	eventLogs, err := h.eventLogRepo.FindByTransactionHash(transactionHash)
+	eventLogs, err := h.eventLogRepo.FindByTransactionHash(address)
 
 	if err != nil {
 		h.responseHelper.SendErrorResponse(w, err.Error(), constants.InternalServerError, err)
 		return
 	}
 
-	msg := fmt.Sprintf(constants.GetEntityByIdMessage, "Event Logs", transactionHash)
+	msg := fmt.Sprintf(constants.GetEntityByIdMessage, "Event Logs", address)
 	h.responseHelper.SendSuccessResponse(w, msg, models.SimplifyEvents(*eventLogs))
-
 }

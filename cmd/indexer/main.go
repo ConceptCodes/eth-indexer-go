@@ -41,13 +41,13 @@ func NewIndexer(
 }
 
 func (i *Indexer) Run() error {
-	client, err := ethclient.Dial(i.cfg.InfuraURL)
+	client, err := ethclient.Dial(i.cfg.RpcURL)
 	if err != nil {
 		i.logger.Error().Err(err).Msgf("Failed to dial the Ethereum client: %v", err)
 		return err
 	}
 
-	i.logger.Debug().Msgf("Connected to Ethereum client: %s", i.cfg.InfuraURL)
+	i.logger.Debug().Msgf("Connected to Rpc Url: %s", i.cfg.RpcURL)
 
 	chainID, err := client.ChainID(i.ctx)
 	if err != nil {

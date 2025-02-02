@@ -8,7 +8,7 @@ import (
 )
 
 type Config struct {
-	InfuraURL   string
+	RpcURL      string
 	BlockNumber uint64
 
 	Timeout int
@@ -45,7 +45,7 @@ func LoadConfig() *Config {
 	viper.AutomaticEnv()
 
 	return &Config{
-		InfuraURL:   viper.GetString("INFURA_URL"),
+		RpcURL:      viper.GetString("RPC_URL"),
 		BlockNumber: viper.GetUint64("BLOCK_NUMBER"),
 
 		Timeout: viper.GetInt("TIMEOUT"),

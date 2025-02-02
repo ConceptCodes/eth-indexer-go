@@ -106,7 +106,7 @@ func (a *Api) Start() error {
 
 	router.HandleFunc(constants.GetBlockByNumberEndpoint, blockHandler.GetBlockByNumberHandler).Methods(http.MethodGet)
 	router.HandleFunc(constants.GetTransactionsByHashEndpoint, transactionHandler.GetTransactionByHashHandler).Methods(http.MethodGet)
-	router.HandleFunc(constants.GetTransactionEventsByHashEndpoint, eventsHandler.GetEventLogsByTransactionHashHandler).Methods(http.MethodGet)
+	router.HandleFunc(constants.GetEventsByContractAddressEndpoint, eventsHandler.GetEventLogsByAddressHandler).Methods(http.MethodGet)
 
 	srv := &http.Server{
 		Handler:      router,

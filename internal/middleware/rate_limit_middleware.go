@@ -26,7 +26,13 @@ func NewRateLimitRequestMiddleware(log *zerolog.Logger, rdb *redis.Client, cfg *
 
 func (m *RateLimitRequestMiddleware) Start(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ipAddress, _, _ := net.SplitHostPort(r.RemoteAddr)
+		ipAddress, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err != nil {
+			m.log.Error().Err(err).Msg("Error while getting IP address")
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+
 		key := fmt.Sprintf("rate_limit:%s:%d", ipAddress, time.Now().Unix())
 
 		limiter := redis_rate.NewLimiter(m.rdb)
@@ -40,11 +46,13 @@ func (m *RateLimitRequestMiddleware) Start(next http.Handler) http.Handler {
 
 		h := w.Header()
 		h.Set("RateLimit-Remaining", strconv.Itoa(res.Remaining))
+		h.Set("RateLimit-Limit", strconv.Itoa(m.cfg.RateLimitCapacity))
 
 		if res.Allowed == 0 {
 			seconds := int(res.RetryAfter / time.Second)
 			h.Set("RateLimit-RetryAfter", strconv.Itoa(seconds))
 			http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
+			return
 		}
 
 		m.log.Debug().Int("remaining", res.Remaining).Msg("Rate limit remaining")

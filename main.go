@@ -6,9 +6,8 @@ import (
 
 	"github.com/conceptcodes/eth-indexer-go/cmd/api"
 	"github.com/conceptcodes/eth-indexer-go/cmd/indexer"
-	"github.com/conceptcodes/eth-indexer-go/internal/repository"
-
 	"github.com/conceptcodes/eth-indexer-go/config"
+	"github.com/conceptcodes/eth-indexer-go/internal/repository"
 	"github.com/conceptcodes/eth-indexer-go/pkg/email"
 	"github.com/conceptcodes/eth-indexer-go/pkg/logger"
 	"github.com/conceptcodes/eth-indexer-go/pkg/storage/db"
