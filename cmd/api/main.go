@@ -116,14 +116,5 @@ func (a *Api) Start() error {
 	}
 
 	a.logger.Info().Msgf("Starting API server at %s:%s", a.cfg.Host, a.cfg.Port)
-	err := srv.ListenAndServe()
-
-	if err != nil {
-		a.logger.
-			Fatal().
-			Err(err).
-			Msg("Error while starting server")
-	}
-
-	return nil
+	return srv.ListenAndServe()
 }
