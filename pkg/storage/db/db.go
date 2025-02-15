@@ -47,6 +47,8 @@ func (db *DBConfig) ConnectDB() {
 		&models.Transaction{},
 		&models.Checkpoint{},
 		&models.Event{},
+		&models.User{},
+		&models.Auth{},
 	)
 	if err != nil {
 		db.logger.Fatal().Msgf("Failed to migrate database schema: %v", err)

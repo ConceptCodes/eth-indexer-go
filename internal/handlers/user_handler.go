@@ -85,6 +85,7 @@ func (h *UserHandler) RegisterUserHandler(w http.ResponseWriter, r *http.Request
 		h.responseHelper.SendErrorResponse(w, err_message, constants.InternalServerError, err)
 	}
 
+	h.log.Debug().Str("email", data.Email).Msg("User registered successfully")
 	code, err := h.authHelper.GenerateOtpCode(data.Email)
 
 	if err != nil {

@@ -36,21 +36,33 @@ func (m *TraceRequestMiddleware) Start(next http.Handler) http.Handler {
 
 		apiKey := r.Header.Get(constants.ApiKeyHeader)
 
-		if apiKey == "" {
-			m.responseHelper.SendErrorResponse(w, "API key is required", constants.Unauthorized, nil)
-			return
+		ignorePaths := []string{
+			constants.HealthCheckEndpoint,
+			constants.ReadinessEndpoint,
+			constants.LoginEndpoint,
+			constants.RegisterEndpoint,
+			constants.ForgotPasswordEndpoint,
+			constants.VerifyEmailEndpoint,
+			constants.ResetPasswordEndpoint,
 		}
 
-		if apiKey != "" {
-
-			valid := m.authHelper.ValidateApiKey(apiKey)
-
-			if !valid {
+		if !helpers.IsPathInIgnoreList(r.URL.Path, ignorePaths) {
+			if apiKey == "" {
 				m.responseHelper.SendErrorResponse(w, "API key is required", constants.Unauthorized, nil)
 				return
 			}
 
-			r = helpers.SetApiKey(r, apiKey)
+			if apiKey != "" {
+
+				valid := m.authHelper.ValidateApiKey(apiKey)
+
+				if !valid {
+					m.responseHelper.SendErrorResponse(w, "API key is required", constants.Unauthorized, nil)
+					return
+				}
+
+				r = helpers.SetApiKey(r, apiKey)
+			}
 		}
 
 		r = helpers.SetRequestId(r, requestId)

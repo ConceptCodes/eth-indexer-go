@@ -65,7 +65,7 @@ func (h *AuthHelper) ValidateOtpCode(target string, otpCode string) error {
 	}
 
 	if code == "" {
-		return errors.New("otp code not found")
+		return errors.New("OTP code not found")
 	}
 
 	if otpCode != code {
