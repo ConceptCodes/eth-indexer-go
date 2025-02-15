@@ -33,7 +33,8 @@ func (m *RateLimitRequestMiddleware) Start(next http.Handler) http.Handler {
 			return
 		}
 
-		key := fmt.Sprintf("rate_limit:%s:%d", ipAddress, time.Now().Unix())
+		key := fmt.Sprintf("rate_limit:%s:%s:%s", ipAddress, r.RequestURI, r.Method)
+		m.log.Debug().Str("key", key).Msg("Rate limit key")
 
 		limiter := redis_rate.NewLimiter(m.rdb)
 		res, err := limiter.Allow(r.Context(), key, redis_rate.PerSecond(m.cfg.RateLimitCapacity))

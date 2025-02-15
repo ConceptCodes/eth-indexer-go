@@ -36,11 +36,11 @@ func (h *EventHandler) GetEventLogsByAddressHandler(w http.ResponseWriter, r *ht
 	address := vars["address"]
 
 	if address == "" {
-		h.responseHelper.SendErrorResponse(w, "Transaction Hash is required", constants.BadRequest, nil)
+		h.responseHelper.SendErrorResponse(w, "Contract address is required", constants.BadRequest, nil)
 		return
 	}
 
-	eventLogs, err := h.eventLogRepo.FindByTransactionHash(address)
+	eventLogs, err := h.eventLogRepo.FindByContractAddress(address)
 
 	if err != nil {
 		h.responseHelper.SendErrorResponse(w, err.Error(), constants.InternalServerError, err)

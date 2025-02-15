@@ -9,7 +9,7 @@ import (
 type EventLogRepository interface {
 	Create(user *models.Event) error
 	CreateAll(logs []*models.Event) error
-	FindByTransactionHash(txHash string) (*[]models.Event, error)
+	FindByContractAddress(txHash string) (*[]models.Event, error)
 }
 
 type GormEventLogRepository struct {
@@ -28,8 +28,8 @@ func (r *GormEventLogRepository) CreateAll(logs []*models.Event) error {
 	return r.db.CreateInBatches(logs, len(logs)).Error
 }
 
-func (r *GormEventLogRepository) FindByTransactionHash(txHash string) (*[]models.Event, error) {
+func (r *GormEventLogRepository) FindByContractAddress(txHash string) (*[]models.Event, error) {
 	var events []models.Event
-	err := r.db.Where("transaction_hash = ?", txHash).Find(&events).Error
+	err := r.db.Where("address = ?", txHash).Find(&events).Error
 	return &events, err
 }
