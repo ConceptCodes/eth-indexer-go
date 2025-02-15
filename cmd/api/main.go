@@ -70,7 +70,9 @@ func (a *Api) Start() error {
 	redisClient := a.redisClient.GetClient()
 	redisHelper := helpers.NewRedisHelper(redisClient, a.logger, a.ctx)
 
-	traceMiddleware := middleware.NewTraceRequestMiddleware(a.logger, authHelper)
+	router.Use(middleware.ContentTypeJSON)
+
+	traceMiddleware := middleware.NewTraceRequestMiddleware(a.logger, authHelper, responseHelper)
 	router.Use(traceMiddleware.Start)
 
 	requestLogger := middleware.NewLoggerMiddleware(a.logger)
@@ -78,7 +80,6 @@ func (a *Api) Start() error {
 
 	rateLimitMiddleware := middleware.NewRateLimitRequestMiddleware(a.logger, redisClient, a.cfg)
 	router.Use(rateLimitMiddleware.Start)
-	router.Use(middleware.ContentTypeJSON)
 
 	userHandler := handlers.NewUserHandler(
 		a.userRepo,

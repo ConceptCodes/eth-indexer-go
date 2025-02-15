@@ -56,13 +56,17 @@ func main() {
 		emailClient,
 	)
 
-	go func() {
-		defer wg.Done()
-		log.Debug().Msg("Starting Indexer")
-		if err := indexer.Run(); err != nil {
-			log.Fatal().Err(err).Msgf("Indexer failed: %v", err)
-		}
-	}()
+	if cfg.IndexerEnabled {
+		go func() {
+			defer wg.Done()
+			log.Debug().Msg("Starting Indexer")
+			if err := indexer.Run(); err != nil {
+				log.Fatal().Err(err).Msgf("Indexer failed: %v", err)
+			}
+		}()
+	} else {
+		log.Info().Msg("Indexer is disabled")
+	}
 
 	go func() {
 		defer wg.Done()

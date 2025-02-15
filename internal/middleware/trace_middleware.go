@@ -11,12 +11,17 @@ import (
 )
 
 type TraceRequestMiddleware struct {
-	log        *zerolog.Logger
-	authHelper *helpers.AuthHelper
+	log            *zerolog.Logger
+	authHelper     *helpers.AuthHelper
+	responseHelper *helpers.ResponseHelper
 }
 
-func NewTraceRequestMiddleware(log *zerolog.Logger, authHelper *helpers.AuthHelper) *TraceRequestMiddleware {
-	return &TraceRequestMiddleware{log: log, authHelper: authHelper}
+func NewTraceRequestMiddleware(log *zerolog.Logger, authHelper *helpers.AuthHelper, responseHelper *helpers.ResponseHelper) *TraceRequestMiddleware {
+	return &TraceRequestMiddleware{
+		log:            log,
+		authHelper:     authHelper,
+		responseHelper: responseHelper,
+	}
 }
 
 func (m *TraceRequestMiddleware) Start(next http.Handler) http.Handler {
@@ -31,12 +36,17 @@ func (m *TraceRequestMiddleware) Start(next http.Handler) http.Handler {
 
 		apiKey := r.Header.Get(constants.ApiKeyHeader)
 
+		if apiKey == "" {
+			m.responseHelper.SendErrorResponse(w, "API key is required", constants.Unauthorized, nil)
+			return
+		}
+
 		if apiKey != "" {
 
 			valid := m.authHelper.ValidateApiKey(apiKey)
 
 			if !valid {
-				w.WriteHeader(http.StatusUnauthorized)
+				m.responseHelper.SendErrorResponse(w, "API key is required", constants.Unauthorized, nil)
 				return
 			}
 

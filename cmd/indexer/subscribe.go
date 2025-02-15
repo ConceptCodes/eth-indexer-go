@@ -3,6 +3,9 @@ package indexer
 import (
 	"context"
 	"math/big"
+	"strings"
+	"sync"
+	"time"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -14,6 +17,8 @@ import (
 
 	"github.com/rs/zerolog"
 )
+
+var blockQueue = make(chan uint64, 100)
 
 type Subscriber struct {
 	log             *zerolog.Logger
@@ -75,9 +80,25 @@ func (s *Subscriber) getLastIndexedBlock() uint64 {
 }
 
 func (s *Subscriber) processHistoricalBlocks(fromBlock, toBlock uint64) {
-	for blockNumber := fromBlock; blockNumber <= toBlock; blockNumber++ {
-		s.processBlock(blockNumber)
+	blockQueue := make(chan uint64, 10)
+	var wg sync.WaitGroup
+
+	for i := 0; i < 5; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for blockNumber := range blockQueue {
+				s.processBlock(blockNumber)
+			}
+		}()
 	}
+
+	for blockNumber := fromBlock; blockNumber <= toBlock; blockNumber++ {
+		blockQueue <- blockNumber
+	}
+	close(blockQueue)
+
+	wg.Wait() 
 }
 
 func (s *Subscriber) SubscribeNewBlocks() {
@@ -87,6 +108,14 @@ func (s *Subscriber) SubscribeNewBlocks() {
 		s.log.Fatal().Err(err).Msg("Failed to subscribe to new blocks")
 	}
 	s.log.Info().Msg("Subscribed to new block headers...")
+
+	for i := 0; i < 5; i++ {
+		go func() {
+			for blockNumber := range blockQueue {
+				s.processBlock(blockNumber)
+			}
+		}()
+	}
 
 	for {
 		select {
@@ -98,20 +127,29 @@ func (s *Subscriber) SubscribeNewBlocks() {
 				s.log.Error().Msg("Received nil header")
 				continue
 			}
-			go s.processBlock(header.Number.Uint64())
+			blockQueue <- header.Number.Uint64()
 		}
 	}
 }
 
 func (s *Subscriber) processBlock(blockNumber uint64) {
-	block, err := s.client.BlockByNumber(s.ctx, big.NewInt(int64(blockNumber)))
-	if err != nil {
-		s.log.Error().Err(err).Msgf("Failed to fetch block %d", blockNumber)
-		return
+	var block *types.Block
+	var err error
+	maxRetries := 3
+	retryDelay := time.Second
+
+	for i := 0; i < maxRetries; i++ {
+		block, err = s.client.BlockByNumber(s.ctx, big.NewInt(int64(blockNumber)))
+		if err == nil && block != nil {
+			break
+		}
+		s.log.Warn().Err(err).Msgf("Retrying block %d fetch (%d/%d)", blockNumber, i+1, maxRetries)
+		time.Sleep(retryDelay)
+		retryDelay *= 2 
 	}
 
-	if block == nil {
-		s.log.Error().Msgf("Block %d is nil", blockNumber)
+	if err != nil || block == nil {
+		s.log.Error().Err(err).Msgf("Failed to fetch block %d after retries", blockNumber)
 		return
 	}
 
@@ -141,37 +179,39 @@ func (s *Subscriber) storeBlock(block *types.Block) {
 func (s *Subscriber) processTransactions(block *types.Block) {
 	var transactions []*models.Transaction
 
-	s.log.Info().Str("block", block.Hash().Hex()).Msgf("Processing block: %s", block.Hash().Hex())
-	s.log.Debug().Msgf("Block has %d transactions", len(block.Transactions()))
+	chainID, err := s.client.NetworkID(s.ctx)
+	if err != nil {
+		s.log.Fatal().Err(err).Msg("Failed to get network Chain ID")
+	}
 
 	for _, tx := range block.Transactions() {
 		if tx == nil {
-			s.log.Error().Msg("Transaction is nil")
+			s.log.Error().Msg("Transaction is nil, skipping")
 			continue
 		}
-		msg, err := types.NewEIP155Signer(tx.ChainId()).Sender(tx)
 
-		if err != nil {
-			s.log.Error().Err(err).Msgf("Failed to derive sender from transaction: %s", tx.Hash().Hex())
+		if tx.ChainId() == nil {
+			s.log.Warn().Msgf("Skipping unsigned transaction: %s", tx.Hash().Hex())
+			continue
 		}
 
-		s.log.Info().Msgf("Sender: %s", msg.Hex())
+		var signer types.Signer
+		if tx.Type() == types.DynamicFeeTxType {
+			signer = types.NewLondonSigner(chainID) // EIP-1559
+		} else {
+			signer = types.NewEIP155Signer(chainID) // Legacy
+		}
+
+		msg, err := signer.Sender(tx)
+		if err != nil {
+			s.log.Warn().Err(err).Msgf("Failed to derive sender for tx: %s", tx.Hash().Hex())
+			continue
+		}
 
 		toAddress := "Contract Creation"
 		if tx.To() != nil {
 			toAddress = tx.To().Hex()
 		}
-
-		s.log.
-			Debug().
-			Str("hash", tx.Hash().Hex()).
-			Str("from", msg.Hex()).
-			Str("block_number", block.Number().String()).
-			Str("to", toAddress).
-			Str("value", tx.Value().String()).
-			Str("gas_price", tx.GasPrice().String()).
-			Uint64("gas_limit", tx.Gas()).
-			Msgf("Processing transaction: %s", tx.Hash().Hex())
 
 		transaction := models.Transaction{
 			Hash:        tx.Hash().Hex(),
@@ -187,7 +227,7 @@ func (s *Subscriber) processTransactions(block *types.Block) {
 	}
 
 	s.transactionRepo.CreateAll(transactions)
-	s.log.Debug().Msgf("Processed %d transactions", len(transactions))
+	s.log.Debug().Msgf("Processed %d transactions in block %d", len(transactions), block.NumberU64())
 }
 
 func (s *Subscriber) processEvents(block *types.Block) {
@@ -209,7 +249,7 @@ func (s *Subscriber) processEvents(block *types.Block) {
 			TransactionHash: vLog.TxHash.Hex(),
 			BlockNumber:     block.NumberU64(),
 			Address:         vLog.Address.Hex(),
-			Data:            string(vLog.Data),
+			Data:            sanitizeData(vLog.Data),
 		}
 	}
 
@@ -224,4 +264,9 @@ func (s *Subscriber) updateCheckpoint(blockNumber uint64) {
 		s.log.Error().Err(err).Msg("Failed to update checkpoint")
 	}
 	s.log.Debug().Msgf("Checkpoint updated to block %d", blockNumber)
+}
+
+func sanitizeData(input []byte) string {
+	str := strings.TrimPrefix(string(input), "0x")
+	return strings.TrimSpace(str)
 }
