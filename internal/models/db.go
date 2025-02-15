@@ -106,6 +106,7 @@ type Checkpoint struct {
 type User struct {
 	gorm.Model
 
+	Name          string `json:"name" gorm:"index"`
 	Email         string `gorm:"uniqueIndex"`
 	Password      string `json:"password"`
 	ApiKey        string `gorm:"uniqueIndex"`

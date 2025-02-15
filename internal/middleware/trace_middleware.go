@@ -34,24 +34,24 @@ func (m *TraceRequestMiddleware) Start(next http.Handler) http.Handler {
 
 		w.Header().Add(constants.TraceIdHeader, requestId)
 
-		// apiKey := r.Header.Get(constants.ApiKeyHeader)
+		apiKey := r.Header.Get(constants.ApiKeyHeader)
 
-		// if apiKey == "" {
-		// 	m.responseHelper.SendErrorResponse(w, "API key is required", constants.Unauthorized, nil)
-		// 	return
-		// }
+		if apiKey == "" {
+			m.responseHelper.SendErrorResponse(w, "API key is required", constants.Unauthorized, nil)
+			return
+		}
 
-		// if apiKey != "" {
+		if apiKey != "" {
 
-		// 	valid := m.authHelper.ValidateApiKey(apiKey)
+			valid := m.authHelper.ValidateApiKey(apiKey)
 
-		// 	if !valid {
-		// 		m.responseHelper.SendErrorResponse(w, "API key is required", constants.Unauthorized, nil)
-		// 		return
-		// 	}
+			if !valid {
+				m.responseHelper.SendErrorResponse(w, "API key is required", constants.Unauthorized, nil)
+				return
+			}
 
-		// 	r = helpers.SetApiKey(r, apiKey)
-		// }
+			r = helpers.SetApiKey(r, apiKey)
+		}
 
 		r = helpers.SetRequestId(r, requestId)
 

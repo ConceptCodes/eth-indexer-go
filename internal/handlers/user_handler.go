@@ -74,6 +74,7 @@ func (h *UserHandler) RegisterUserHandler(w http.ResponseWriter, r *http.Request
 	user := models.User{
 		Email:    data.Email,
 		Password: password_hash,
+		Name:     data.Name,
 		Enabled:  false,
 		ApiKey:   apiKey,
 	}
@@ -101,6 +102,7 @@ func (h *UserHandler) RegisterUserHandler(w http.ResponseWriter, r *http.Request
 
 	res := &models.RegisterUserResponse{
 		Email:  data.Email,
+		Name:   data.Name,
 		ApiKey: apiKey,
 	}
 
@@ -137,6 +139,7 @@ func (h *UserHandler) VerifyEmailHandler(w http.ResponseWriter, r *http.Request)
 		h.responseHelper.SendErrorResponse(w, err_message, constants.NotFound, nil)
 	} else {
 		user.EmailVerified = time.Now()
+		user.Enabled = true
 		err = h.userRepo.Save(user)
 
 		if err != nil {

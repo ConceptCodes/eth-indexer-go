@@ -11,6 +11,7 @@ type LoginRequest struct {
 }
 
 type RegisterRequest struct {
+	Name     string `json:"name" validate:"required,noSQLKeywords"`
 	Email    string `json:"email" validate:"email,required,noSQLKeywords"`
 	Password string `json:"password" validate:"required,noSQLKeywords"`
 }
