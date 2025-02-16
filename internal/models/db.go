@@ -24,6 +24,7 @@ func (b *Block) SimpleBlock() SimpleBlock {
 	return SimpleBlock{
 		Number:       b.Number,
 		Hash:         b.Hash,
+		Nonce:        b.Nonce,
 		ParentHash:   b.ParentHash,
 		Size:         b.Size,
 		Miner:        b.Miner,
@@ -57,6 +58,7 @@ func (t *Transaction) SimpleTransaction() SimpleTransaction {
 		GasPrice:    t.GasPrice,
 		GasLimit:    t.GasLimit,
 		GasUsed:     t.GasUsed,
+		Nonce:       t.Nonce,
 	}
 }
 
@@ -75,7 +77,7 @@ type Event struct {
 	TransactionHash string `gorm:"index"`
 	BlockNumber     uint64 `gorm:"index"`
 	Address         string
-	Data            string
+	Data            string   `gorm:"type:jsonb"`
 	Topics          []string `gorm:"-"`
 }
 

@@ -67,7 +67,7 @@ func (i *Indexer) Run() error {
 		i.eventLogRepo,
 		i.checkpointRepo,
 	)
-	subscriber.SubscribeNewBlocks()
+	subscriber.StartIndexing()
 
 	return nil
 }

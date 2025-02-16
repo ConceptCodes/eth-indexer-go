@@ -36,6 +36,7 @@ type SimpleTransaction struct {
 
 type SimpleBlock struct {
 	Number       uint64              `json:"number"`
+	Nonce        string              `json:"nonce"`
 	Hash         string              `json:"hash"`
 	ParentHash   string              `json:"parent_hash"`
 	Size         uint64              `json:"size"`

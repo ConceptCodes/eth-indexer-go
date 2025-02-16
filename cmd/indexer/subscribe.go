@@ -6,8 +6,10 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 
@@ -72,7 +74,7 @@ func (s *Subscriber) StartIndexing() {
 
 func (s *Subscriber) getLastIndexedBlock() uint64 {
 	checkpoint, err := s.checkpointRepo.FindLastBlock()
-	if err != nil || checkpoint == nil {
+	if err != nil || checkpoint == nil || checkpoint.LastBlock == 0 {
 		s.log.Warn().Msg("No checkpoint found, starting from configured block number")
 		return s.cfg.BlockNumber
 	}
@@ -98,7 +100,7 @@ func (s *Subscriber) processHistoricalBlocks(fromBlock, toBlock uint64) {
 	}
 	close(blockQueue)
 
-	wg.Wait() 
+	wg.Wait()
 }
 
 func (s *Subscriber) SubscribeNewBlocks() {
@@ -145,7 +147,7 @@ func (s *Subscriber) processBlock(blockNumber uint64) {
 		}
 		s.log.Warn().Err(err).Msgf("Retrying block %d fetch (%d/%d)", blockNumber, i+1, maxRetries)
 		time.Sleep(retryDelay)
-		retryDelay *= 2 
+		retryDelay *= 2
 	}
 
 	if err != nil || block == nil {
@@ -213,6 +215,12 @@ func (s *Subscriber) processTransactions(block *types.Block) {
 			toAddress = tx.To().Hex()
 		}
 
+		receipt, err := s.client.TransactionReceipt(s.ctx, tx.Hash())
+		if err != nil {
+			s.log.Warn().Err(err).Msgf("Failed to fetch receipt for tx: %s", tx.Hash().Hex())
+			continue
+		}
+
 		transaction := models.Transaction{
 			Hash:        tx.Hash().Hex(),
 			BlockNumber: block.NumberU64(),
@@ -221,6 +229,8 @@ func (s *Subscriber) processTransactions(block *types.Block) {
 			Value:       tx.Value().String(),
 			GasPrice:    tx.GasPrice().String(),
 			GasLimit:    tx.Gas(),
+			GasUsed:     receipt.GasUsed,
+			Nonce:       tx.Nonce(),
 		}
 
 		transactions = append(transactions, &transaction)
@@ -249,12 +259,21 @@ func (s *Subscriber) processEvents(block *types.Block) {
 			TransactionHash: vLog.TxHash.Hex(),
 			BlockNumber:     block.NumberU64(),
 			Address:         vLog.Address.Hex(),
-			Data:            sanitizeData(vLog.Data),
+			// Data:            sanitizeData(vLog.Data),
+			Topics:          mapTopics(vLog.Topics),
 		}
 	}
 
 	s.eventLogRepo.CreateAll(events)
 	s.log.Debug().Msgf("Processed %d events", len(events))
+}
+
+func mapTopics(topics []common.Hash) []string {
+	mappedTopics := make([]string, len(topics))
+	for i, topic := range topics {
+		mappedTopics[i] = topic.Hex()
+	}
+	return mappedTopics
 }
 
 func (s *Subscriber) updateCheckpoint(blockNumber uint64) {
@@ -267,6 +286,25 @@ func (s *Subscriber) updateCheckpoint(blockNumber uint64) {
 }
 
 func sanitizeData(input []byte) string {
-	str := strings.TrimPrefix(string(input), "0x")
-	return strings.TrimSpace(str)
+	str := string(input)
+	str = strings.ReplaceAll(str, "\x00", "")
+
+	str = strings.TrimPrefix(str, "0x")
+	str = strings.TrimSpace(str)
+
+	if !utf8.ValidString(str) {
+		validStr := make([]rune, 0, len(str))
+		for i, r := range str {
+			if r == utf8.RuneError {
+				_, size := utf8.DecodeRuneInString(str[i:])
+				if size == 1 {
+					continue
+				}
+			}
+			validStr = append(validStr, r)
+		}
+		str = string(validStr)
+	}
+
+	return str
 }
