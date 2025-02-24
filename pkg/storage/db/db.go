@@ -34,7 +34,9 @@ func (db *DBConfig) ConnectDB() {
 		db.cfg.DBHost, db.cfg.DBPort, db.cfg.DBUser, db.cfg.DBPassword, db.cfg.DBName,
 	)
 
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+		TranslateError: true,
+	})
 	if err != nil {
 		db.logger.Fatal().Err(err).Msgf("Failed to connect to database: %v", err)
 	}

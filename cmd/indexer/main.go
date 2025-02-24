@@ -18,6 +18,7 @@ type Indexer struct {
 	transactionRepo repository.TransactionRepository
 	eventLogRepo    repository.EventLogRepository
 	checkpointRepo  repository.CheckpointRepository
+	client          *ethclient.Client
 }
 
 func NewIndexer(
@@ -40,32 +41,47 @@ func NewIndexer(
 	}
 }
 
+func (i *Indexer) connect() error {
+	var lastErr error
+	for _, url := range i.cfg.RpcUrls {
+		c, err := ethclient.Dial(url)
+		if err != nil {
+			i.logger.Error().Err(err).Msgf("Failed to dial Ethereum client at %s", url)
+			lastErr = err
+			continue
+		}
+
+		chainID, err := c.ChainID(i.ctx)
+		if err != nil {
+			i.logger.Error().Err(err).Msgf("Failed to fetch chain ID from %s", url)
+			lastErr = err
+			continue
+		}
+
+		i.logger.Info().Msgf("Connected to Ethereum chain ID: %s using RPC Url: %s", chainID.String(), url)
+		i.client = c
+		return nil
+	}
+
+	return lastErr
+}
+
 func (i *Indexer) Run() error {
-	client, err := ethclient.Dial(i.cfg.RpcURL)
-	if err != nil {
-		i.logger.Error().Err(err).Msgf("Failed to dial the Ethereum client: %v", err)
+	if err := i.connect(); err != nil {
+		i.logger.Fatal().Err(err).Msg("All RPC URLs exhausted")
 		return err
 	}
-
-	i.logger.Debug().Msgf("Connected to Rpc Url: %s", i.cfg.RpcURL)
-
-	chainID, err := client.ChainID(i.ctx)
-	if err != nil {
-		i.logger.Error().Err(err).Msg("Failed to fetch chain ID")
-		return err
-	}
-
-	i.logger.Info().Msgf("Connected to Ethereum chain ID: %s", chainID.String())
 
 	subscriber := NewSubscriber(
 		i.logger,
 		i.ctx,
 		i.cfg,
-		client,
+		i.client,
 		i.blockRepo,
 		i.transactionRepo,
 		i.eventLogRepo,
 		i.checkpointRepo,
+		i.connect,
 	)
 	subscriber.StartIndexing()
 

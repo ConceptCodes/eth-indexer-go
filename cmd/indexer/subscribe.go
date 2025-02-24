@@ -2,6 +2,7 @@ package indexer
 
 import (
 	"context"
+	"errors"
 	"math/big"
 	"strings"
 	"sync"
@@ -12,6 +13,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"gorm.io/gorm"
 
 	"github.com/conceptcodes/eth-indexer-go/config"
 	"github.com/conceptcodes/eth-indexer-go/internal/models"
@@ -21,6 +23,7 @@ import (
 )
 
 var blockQueue = make(chan uint64, 100)
+var maxRetries = 5
 
 type Subscriber struct {
 	log             *zerolog.Logger
@@ -31,6 +34,7 @@ type Subscriber struct {
 	transactionRepo repository.TransactionRepository
 	eventLogRepo    repository.EventLogRepository
 	checkpointRepo  repository.CheckpointRepository
+	connect         func() error
 }
 
 func NewSubscriber(
@@ -42,6 +46,7 @@ func NewSubscriber(
 	transactionRepo repository.TransactionRepository,
 	eventLogRepo repository.EventLogRepository,
 	checkpointRepo repository.CheckpointRepository,
+	connect func() error,
 ) *Subscriber {
 	return &Subscriber{
 		log:             log,
@@ -52,6 +57,7 @@ func NewSubscriber(
 		transactionRepo: transactionRepo,
 		eventLogRepo:    eventLogRepo,
 		checkpointRepo:  checkpointRepo,
+		connect:         connect,
 	}
 }
 
@@ -75,7 +81,7 @@ func (s *Subscriber) StartIndexing() {
 func (s *Subscriber) getLastIndexedBlock() uint64 {
 	checkpoint, err := s.checkpointRepo.FindLastBlock()
 	if err != nil || checkpoint == nil || checkpoint.LastBlock == 0 {
-		s.log.Warn().Msg("No checkpoint found, starting from configured block number")
+		s.log.Debug().Msg("No checkpoint found, starting from configured block number")
 		return s.cfg.BlockNumber
 	}
 	return checkpoint.LastBlock
@@ -123,7 +129,10 @@ func (s *Subscriber) SubscribeNewBlocks() {
 		select {
 		case err := <-sub.Err():
 			s.log.Error().Err(err).Msg("Subscription error")
-			return
+			if err := s.connect(); err != nil {
+				s.log.Fatal().Err(err).Msg("Failed to reconnect to Ethereum client")
+			}
+			continue
 		case header := <-headers:
 			if header == nil {
 				s.log.Error().Msg("Received nil header")
@@ -137,8 +146,10 @@ func (s *Subscriber) SubscribeNewBlocks() {
 func (s *Subscriber) processBlock(blockNumber uint64) {
 	var block *types.Block
 	var err error
-	maxRetries := 3
 	retryDelay := time.Second
+
+	// add a delay to avoid overwhelming the node
+	time.Sleep(3 * time.Second)
 
 	for i := 0; i < maxRetries; i++ {
 		block, err = s.client.BlockByNumber(s.ctx, big.NewInt(int64(blockNumber)))
@@ -151,8 +162,7 @@ func (s *Subscriber) processBlock(blockNumber uint64) {
 	}
 
 	if err != nil || block == nil {
-		s.log.Error().Err(err).Msgf("Failed to fetch block %d after retries", blockNumber)
-		return
+		s.log.Fatal().Err(err).Msgf("Failed to fetch block %d after retries", blockNumber)
 	}
 
 	s.storeBlock(block)
@@ -175,7 +185,7 @@ func (s *Subscriber) storeBlock(block *types.Block) {
 	if err := s.blockRepo.Create(&blockData); err != nil {
 		s.log.Error().Err(err).Msg("Failed to save block to repository")
 	}
-	s.log.Debug().Msgf("Stored block %d", block.NumberU64())
+	s.log.Info().Msgf("Stored block %d", block.NumberU64())
 }
 
 func (s *Subscriber) processTransactions(block *types.Block) {
@@ -183,7 +193,11 @@ func (s *Subscriber) processTransactions(block *types.Block) {
 
 	chainID, err := s.client.NetworkID(s.ctx)
 	if err != nil {
-		s.log.Fatal().Err(err).Msg("Failed to get network Chain ID")
+		s.log.Error().Err(err).Msg("Failed to get network Chain ID")
+		if err := s.connect(); err != nil {
+			s.log.Fatal().Err(err).Msg("Failed to reconnect to Ethereum client")
+		}
+		return
 	}
 
 	for _, tx := range block.Transactions() {
@@ -193,7 +207,7 @@ func (s *Subscriber) processTransactions(block *types.Block) {
 		}
 
 		if tx.ChainId() == nil {
-			s.log.Warn().Msgf("Skipping unsigned transaction: %s", tx.Hash().Hex())
+			s.log.Debug().Msgf("Skipping unsigned transaction: %s", tx.Hash().Hex())
 			continue
 		}
 
@@ -206,7 +220,7 @@ func (s *Subscriber) processTransactions(block *types.Block) {
 
 		msg, err := signer.Sender(tx)
 		if err != nil {
-			s.log.Warn().Err(err).Msgf("Failed to derive sender for tx: %s", tx.Hash().Hex())
+			s.log.Debug().Err(err).Msgf("Failed to derive sender for tx: %s", tx.Hash().Hex())
 			continue
 		}
 
@@ -215,11 +229,11 @@ func (s *Subscriber) processTransactions(block *types.Block) {
 			toAddress = tx.To().Hex()
 		}
 
-		receipt, err := s.client.TransactionReceipt(s.ctx, tx.Hash())
-		if err != nil {
-			s.log.Warn().Err(err).Msgf("Failed to fetch receipt for tx: %s", tx.Hash().Hex())
-			continue
-		}
+		// receipt, err := s.client.TransactionReceipt(s.ctx, tx.Hash())
+		// if err != nil {
+		// 	s.log.Warn().Err(err).Msgf("Failed to fetch receipt for tx: %s", tx.Hash().Hex())
+		// 	continue
+		// }
 
 		transaction := models.Transaction{
 			Hash:        tx.Hash().Hex(),
@@ -229,15 +243,22 @@ func (s *Subscriber) processTransactions(block *types.Block) {
 			Value:       tx.Value().String(),
 			GasPrice:    tx.GasPrice().String(),
 			GasLimit:    tx.Gas(),
-			GasUsed:     receipt.GasUsed,
-			Nonce:       tx.Nonce(),
+			// GasUsed:     receipt.GasUsed,
+			Nonce: tx.Nonce(),
 		}
 
 		transactions = append(transactions, &transaction)
 	}
+	err = s.transactionRepo.CreateAll(transactions)
 
-	s.transactionRepo.CreateAll(transactions)
-	s.log.Debug().Msgf("Processed %d transactions in block %d", len(transactions), block.NumberU64())
+	if errors.Is(err, gorm.ErrDuplicatedKey) {
+		s.log.Debug().Msgf("Skipping duplicate transaction(s) in block %d", block.NumberU64())
+		return
+	} else if err != nil {
+		s.log.Fatal().Err(err).Msg("Failed to save transactions to repository")
+		return
+	}
+	s.log.Info().Msgf("Processed %d transaction(s) in block %d", len(transactions), block.NumberU64())
 }
 
 func (s *Subscriber) processEvents(block *types.Block) {
@@ -249,6 +270,9 @@ func (s *Subscriber) processEvents(block *types.Block) {
 	logs, err := s.client.FilterLogs(context.Background(), query)
 	if err != nil {
 		s.log.Error().Err(err).Msg("Failed to fetch logs")
+		if err := s.connect(); err != nil {
+			s.log.Fatal().Err(err).Msg("Failed to reconnect to Ethereum client")
+		}
 		return
 	}
 
@@ -259,13 +283,16 @@ func (s *Subscriber) processEvents(block *types.Block) {
 			TransactionHash: vLog.TxHash.Hex(),
 			BlockNumber:     block.NumberU64(),
 			Address:         vLog.Address.Hex(),
-			// Data:            sanitizeData(vLog.Data),
 			Topics:          mapTopics(vLog.Topics),
+			// Data:            sanitizeData(vLog.Data),
 		}
 	}
 
-	s.eventLogRepo.CreateAll(events)
-	s.log.Debug().Msgf("Processed %d events", len(events))
+	if err = s.eventLogRepo.CreateAll(events); err != nil {
+		s.log.Error().Err(err).Msg("Failed to save events to repository")
+		return
+	}
+	s.log.Debug().Msgf("Processed %d event(s)", len(events))
 }
 
 func mapTopics(topics []common.Hash) []string {
@@ -278,8 +305,7 @@ func mapTopics(topics []common.Hash) []string {
 
 func (s *Subscriber) updateCheckpoint(blockNumber uint64) {
 	checkpoint := models.Checkpoint{LastBlock: blockNumber}
-	err := s.checkpointRepo.Create(&checkpoint)
-	if err != nil {
+	if err := s.checkpointRepo.Create(&checkpoint); err != nil {
 		s.log.Error().Err(err).Msg("Failed to update checkpoint")
 	}
 	s.log.Debug().Msgf("Checkpoint updated to block %d", blockNumber)

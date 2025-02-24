@@ -74,10 +74,10 @@ type Event struct {
 	gorm.Model
 
 	LogIndex        uint   `gorm:"primaryKey;autoIncrement:false"`
-	TransactionHash string `gorm:"index"`
-	BlockNumber     uint64 `gorm:"index"`
+	TransactionHash string `gorm:"index;not null;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
+	BlockNumber     uint64 `gorm:"index;not null;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;"`
 	Address         string
-	Data            string   `gorm:"type:jsonb"`
+	Data            string
 	Topics          []string `gorm:"-"`
 }
 

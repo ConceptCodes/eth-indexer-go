@@ -2,13 +2,14 @@ package config
 
 import (
 	"log"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	RpcURL         string
+	RpcUrls        []string
 	BlockNumber    uint64
 	IndexerEnabled bool
 
@@ -46,7 +47,7 @@ func LoadConfig() *Config {
 	viper.AutomaticEnv()
 
 	return &Config{
-		RpcURL:         viper.GetString("RPC_URL"),
+		RpcUrls:        strings.Split(viper.GetString("RPC_URLS"), ","),
 		BlockNumber:    viper.GetUint64("BLOCK_NUMBER"),
 		IndexerEnabled: viper.GetBool("INDEXER_ENABLED"),
 
