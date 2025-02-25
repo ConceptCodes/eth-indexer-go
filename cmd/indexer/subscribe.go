@@ -229,11 +229,11 @@ func (s *Subscriber) processTransactions(block *types.Block) {
 			toAddress = tx.To().Hex()
 		}
 
-		// receipt, err := s.client.TransactionReceipt(s.ctx, tx.Hash())
-		// if err != nil {
-		// 	s.log.Warn().Err(err).Msgf("Failed to fetch receipt for tx: %s", tx.Hash().Hex())
-		// 	continue
-		// }
+		receipt, err := s.client.TransactionReceipt(s.ctx, tx.Hash())
+		if err != nil {
+			s.log.Warn().Err(err).Msgf("Failed to fetch receipt for tx: %s", tx.Hash().Hex())
+			continue
+		}
 
 		transaction := models.Transaction{
 			Hash:        tx.Hash().Hex(),
@@ -243,8 +243,10 @@ func (s *Subscriber) processTransactions(block *types.Block) {
 			Value:       tx.Value().String(),
 			GasPrice:    tx.GasPrice().String(),
 			GasLimit:    tx.Gas(),
-			// GasUsed:     receipt.GasUsed,
-			Nonce: tx.Nonce(),
+			GasUsed:     receipt.GasUsed,
+			Nonce:       tx.Nonce(),
+			Timestamp:   block.Time(),
+			Success:     types.ReceiptStatusSuccessful == receipt.Status,
 		}
 
 		transactions = append(transactions, &transaction)

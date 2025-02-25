@@ -1,0 +1,23 @@
+package views
+
+templ Nav() {
+  <nav class="border-b">
+        <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <a href="/" class="text-xl font-bold">
+                    Ethereum Indexer
+                </a>
+            </div>
+            <div class="flex-1 max-w-xl mx-4">
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-2 top-2.5 h-4 w-4 text-gray-500"></i>
+                    <input 
+                        type="text" 
+                        placeholder="Search by Address / Txn Hash / Block / Token" 
+                        class="w-full pl-8 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                </div>
+            </div>
+        </div>
+    </nav>
+}

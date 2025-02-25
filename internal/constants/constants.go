@@ -29,10 +29,14 @@ const (
 	OtpCodeMessage             = "Your OTP code is %s."
 	InternalServerErrorMessage = "Internal server error."
 
-	IndexViewEndpoint    = "/"
-	LoginViewEndpoint    = "/login"
-	RegisterViewEndpoint = "/register"
-	HomeViewEndpoint     = "/home"
+	IndexViewEndpoint       = "/"
+	LoginViewEndpoint       = "/login"
+	RegisterViewEndpoint    = "/register"
+	HomeViewEndpoint        = "/home"
+	TransactionViewEndpoint = "/tx/{hash:0x[0-9a-fA-F]{64}}"
+	AccountViewEndpoint     = "/account/{address:0x[0-9a-fA-F]{40}}"
+	BlockViewEndpoint       = "/block/{blockNumber:[0-9]+}"
+	NotFoundViewEndpoint    = "/404"
 
 	ApiPrefix           = "/api/v1"
 	HealthCheckEndpoint = ApiPrefix + "/health/alive"

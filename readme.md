@@ -8,7 +8,7 @@ Coincidentally, at work, I've built similar systems designed to index and proces
 
 Probably not. If you need a robust, production-grade solution, I’d recommend using established services like Etherscan, Alchemy, Infura, or The Graph, which offer highly scalable and optimized indexing solutions.
 
-This project was built purely for fun and experimentation in my free time. If you're interested in playing around with Ethereum data locally, I’d suggest running this indexer with a testnet like Sepolia or Holesky.
+This project was built purely for fun and experimentation. If you're interested in playing around with Ethereum data locally, I’d suggest running this indexer with a testnet like Sepolia or Holesky.
 
 ## Architecture
 
@@ -16,7 +16,7 @@ This project was built purely for fun and experimentation in my free time. If yo
 
 
 ## Roadmap
-- [ ] Add authentication for the API
+- [x] Add authentication for the API
 - [ ] Add an Etherscan-Like UI to view indexed data
 - [ ] Setup my own Ethereum node using Geth/Erigon
 - [ ] Add Support for other EVM chains

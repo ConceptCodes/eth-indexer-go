@@ -10,6 +10,7 @@ type BlockRepository interface {
 	Create(user *models.Block) error
 	Delete(id string) error
 	FindByBlockNumber(blockNumber string) (*models.Block, error)
+	Count() (int64, error)
 }
 
 type GormBlockRepository struct {
@@ -32,4 +33,10 @@ func (r *GormBlockRepository) FindByBlockNumber(blockNumber string) (*models.Blo
 	var block models.Block
 	err := r.db.Preload("Transactions").First(&block, "number = ?", blockNumber).Error
 	return &block, err
+}
+
+func (r *GormBlockRepository) Count() (int64, error) {
+	var count int64
+	err := r.db.Model(&models.Block{}).Count(&count).Error
+	return count, err
 }

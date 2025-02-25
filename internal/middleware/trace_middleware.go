@@ -49,10 +49,14 @@ func (m *TraceRequestMiddleware) Start(next http.Handler) http.Handler {
 			constants.LoginViewEndpoint,
 			constants.RegisterViewEndpoint,
 			constants.HomeViewEndpoint,
+			constants.NotFoundViewEndpoint,
 		}
 
-
-		if !helpers.IsPathInIgnoreList(r.URL.Path, ignorePaths) && !strings.HasPrefix(r.URL.Path, "/public") {
+		if !helpers.IsPathInIgnoreList(r.URL.Path, ignorePaths) &&
+			!strings.HasPrefix(r.URL.Path, "/public") &&
+			!strings.HasPrefix(r.URL.Path, "/tx") &&
+			!strings.HasPrefix(r.URL.Path, "/block") &&
+			!strings.HasPrefix(r.URL.Path, "/address") {
 			if apiKey == "" {
 				m.responseHelper.SendErrorResponse(w, "API key is required", constants.Unauthorized, nil)
 				return

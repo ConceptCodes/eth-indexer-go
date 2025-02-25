@@ -8,7 +8,14 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func Home() templ.Component {
+import (
+	"strconv"
+
+	"github.com/conceptcodes/eth-indexer-go/internal/helpers"
+	"github.com/conceptcodes/eth-indexer-go/internal/models"
+)
+
+func Home(data models.HomeData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -41,7 +48,135 @@ func Home() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Navigation --> <nav class=\"border-b\"><div class=\"container mx-auto px-4 h-16 flex items-center justify-between\"><div class=\"flex items-center space-x-4\"><a href=\"/\" class=\"text-xl font-bold\">EtherScan</a></div><div class=\"flex-1 max-w-xl mx-4\"><div class=\"relative\"><i data-lucide=\"search\" class=\"absolute left-2 top-2.5 h-4 w-4 text-gray-500\"></i> <input type=\"text\" placeholder=\"Search by Address / Txn Hash / Block / Token\" class=\"w-full pl-8 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\"></div></div><button class=\"px-4 py-2 border rounded-md hover:bg-gray-100\">Connect Wallet</button></div></nav><!-- Hero Section --> <section class=\"py-12 border-b bg-gray-50\"><div class=\"container mx-auto px-4\"><h1 class=\"text-3xl font-bold mb-8\">Ethereum Blockchain Explorer</h1><div class=\"grid grid-cols-1 md:grid-cols-3 gap-6\"><div class=\"bg-white p-6 rounded-lg border\"><div class=\"flex items-center space-x-2 mb-2\"><i data-lucide=\"blocks\" class=\"h-5 w-5 text-gray-500\"></i><h3 class=\"text-sm font-medium text-gray-500\">TOTAL BLOCKS</h3></div><p class=\"text-2xl font-bold\">18,772,991</p></div><div class=\"bg-white p-6 rounded-lg border\"><div class=\"flex items-center space-x-2 mb-2\"><i data-lucide=\"clock\" class=\"h-5 w-5 text-gray-500\"></i><h3 class=\"text-sm font-medium text-gray-500\">AVG BLOCK TIME</h3></div><p class=\"text-2xl font-bold\">12.03s</p></div><div class=\"bg-white p-6 rounded-lg border\"><div class=\"flex items-center space-x-2 mb-2\"><i data-lucide=\"wallet\" class=\"h-5 w-5 text-gray-500\"></i><h3 class=\"text-sm font-medium text-gray-500\">TOTAL TRANSACTIONS</h3></div><p class=\"text-2xl font-bold\">2,145,367,890</p></div></div></div></section><!-- Recent Transactions --> <section class=\"py-12\"><div class=\"container mx-auto px-4\"><h2 class=\"text-2xl font-bold mb-6\">Recent Transactions</h2><div class=\"border rounded-lg overflow-x-auto\"><table class=\"w-full\"><thead><tr class=\"border-b bg-gray-50\"><th class=\"px-6 py-3 text-left text-sm font-medium text-gray-500\">Transaction Hash</th><th class=\"px-6 py-3 text-left text-sm font-medium text-gray-500\">Block</th><th class=\"px-6 py-3 text-left text-sm font-medium text-gray-500\">From</th><th class=\"px-6 py-3 text-left text-sm font-medium text-gray-500\">To</th><th class=\"px-6 py-3 text-right text-sm font-medium text-gray-500\">Value (ETH)</th></tr></thead> <tbody><tr class=\"border-b hover:bg-gray-50\"><td class=\"px-6 py-4\"><div class=\"flex items-center space-x-2\"><i data-lucide=\"arrow-up-right\" class=\"h-4 w-4 text-gray-500\"></i> <a href=\"#\" class=\"text-blue-500 hover:text-blue-600\">0x1234...5678</a></div></td><td class=\"px-6 py-4\">18772991</td><td class=\"px-6 py-4\"><a href=\"#\" class=\"text-blue-500 hover:text-blue-600\">0xabcd...efgh</a></td><td class=\"px-6 py-4\"><a href=\"#\" class=\"text-blue-500 hover:text-blue-600\">0x9876...5432</a></td><td class=\"px-6 py-4 text-right\">0.5234</td></tr><!-- Repeat similar rows for more transactions --></tbody></table></div></div></section><!-- Footer --> <footer class=\"border-t py-12 bg-gray-50\"><div class=\"container mx-auto px-4\"><div class=\"grid grid-cols-1 md:grid-cols-4 gap-8\"><div><h3 class=\"font-bold mb-4\">Company</h3><ul class=\"space-y-2\"><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">About Us</a></li><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">Contact Us</a></li><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">Brand Assets</a></li></ul></div><div><h3 class=\"font-bold mb-4\">Community</h3><ul class=\"space-y-2\"><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">API Documentation</a></li><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">Knowledge Base</a></li><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">Network Status</a></li></ul></div><div><h3 class=\"font-bold mb-4\">Products</h3><ul class=\"space-y-2\"><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">Explorer</a></li><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">Charts</a></li><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">API Services</a></li></ul></div><div><h3 class=\"font-bold mb-4\">Connect</h3><ul class=\"space-y-2\"><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">Twitter</a></li><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">Discord</a></li><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">GitHub</a></li></ul></div></div><div class=\"mt-8 pt-8 border-t text-center text-sm text-gray-500\"><p>© <script>document.write(new Date().getFullYear())</script>EtherScan Clone. All rights reserved.</p></div></div></footer><script>\n        lucide.createIcons();\n    </script>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Navigation -->  <!-- Hero Section --> <section class=\"py-12 border-b bg-gray-50\"><div class=\"container mx-auto px-4\"><h1 class=\"text-3xl font-bold mb-8\">Ethereum Blockchain Explorer</h1><div class=\"grid grid-cols-1 md:grid-cols-3 gap-6\"><div class=\"bg-white p-6 rounded-lg border\"><div class=\"flex items-center space-x-2 mb-2\"><i data-lucide=\"blocks\" class=\"h-5 w-5 text-gray-500\"></i><h3 class=\"text-sm font-medium text-gray-500\">TOTAL BLOCKS</h3></div><p class=\"text-2xl font-bold\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(data.BlockCount, 10))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/home.templ`, Line: 24, Col: 89}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</p></div><div class=\"bg-white p-6 rounded-lg border\"><div class=\"flex items-center space-x-2 mb-2\"><i data-lucide=\"clock\" class=\"h-5 w-5 text-gray-500\"></i><h3 class=\"text-sm font-medium text-gray-500\">AVG BLOCK TIME</h3></div><p class=\"text-2xl font-bold\">12.03s</p></div><div class=\"bg-white p-6 rounded-lg border\"><div class=\"flex items-center space-x-2 mb-2\"><i data-lucide=\"wallet\" class=\"h-5 w-5 text-gray-500\"></i><h3 class=\"text-sm font-medium text-gray-500\">TOTAL TRANSACTIONS</h3></div><p class=\"text-2xl font-bold\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(data.TxCount, 10))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/home.templ`, Line: 38, Col: 86}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p></div></div></div></section><!-- Recent Transactions --> <section class=\"py-12\"><div class=\"container mx-auto px-4\"><h2 class=\"text-2xl font-bold mb-6\">Recent Transactions</h2><div class=\"border rounded-lg overflow-x-auto\"><table class=\"w-full\"><thead><tr class=\"border-b bg-gray-50\"><th class=\"px-6 py-3 text-left text-sm font-medium text-gray-500\">Transaction Hash</th><th class=\"px-6 py-3 text-left text-sm font-medium text-gray-500\">Block</th><th class=\"px-6 py-3 text-left text-sm font-medium text-gray-500\">From</th><th class=\"px-6 py-3 text-left text-sm font-medium text-gray-500\">To</th><th class=\"px-6 py-3 text-right text-sm font-medium text-gray-500\">Value (ETH)</th></tr></thead> <tbody>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, tx := range data.Transactions {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<tr class=\"border-b hover:bg-gray-50\"><td class=\"px-6 py-4\"><div class=\"flex items-center space-x-2\"><i data-lucide=\"arrow-up-right\" class=\"h-4 w-4 text-gray-500\"></i> <a href=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var5 templ.SafeURL = templ.SafeURL("/tx/" + tx.Hash)
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var5)))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" class=\"text-blue-500 hover:text-blue-600\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var6 string
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(helpers.TruncateHash(tx.Hash))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/home.templ`, Line: 65, Col: 146}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</a></div></td><td class=\"px-6 py-4\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var7 string
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatUint(tx.BlockNumber, 10))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/home.templ`, Line: 68, Col: 89}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</td><td class=\"px-6 py-4\"><a href=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var8 templ.SafeURL = templ.SafeURL("/address/" + tx.From)
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var8)))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"text-blue-500 hover:text-blue-600\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(helpers.TruncateHash(tx.From))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/home.templ`, Line: 70, Col: 149}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</a></td><td class=\"px-6 py-4\"><a href=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var10 templ.SafeURL = templ.SafeURL("/address/" + tx.To)
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var10)))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"text-blue-500 hover:text-blue-600\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(helpers.TruncateHash(tx.To))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/home.templ`, Line: 73, Col: 145}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</a></td><td class=\"px-6 py-4 text-right\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var12 string
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(helpers.FormatEthValue(tx.Value))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/home.templ`, Line: 75, Col: 94}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</td></tr>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</tbody></table></div></div></section><!-- Footer --> <footer class=\"border-t py-12 bg-gray-50\"><div class=\"container mx-auto px-4\"><div class=\"grid grid-cols-1 md:grid-cols-4 gap-8\"><div><h3 class=\"font-bold mb-4\">Company</h3><ul class=\"space-y-2\"><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">About Us</a></li><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">Contact Us</a></li></ul></div><div><h3 class=\"font-bold mb-4\">Community</h3><ul class=\"space-y-2\"><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">API Documentation</a></li><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">Network Status</a></li></ul></div><div><h3 class=\"font-bold mb-4\">Products</h3><ul class=\"space-y-2\"><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">Explorer</a></li><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">Charts</a></li><li><a href=\"#\" class=\"text-sm text-gray-500 hover:text-gray-900\">API Services</a></li></ul></div><div><h3 class=\"font-bold mb-4\">Connect</h3><ul class=\"space-y-2\"><li><a href=\"https://github.com/conceptcodes/eth-indexer-go\" class=\"text-sm text-gray-500 hover:text-gray-900\">GitHub</a></li></ul></div></div><div class=\"mt-8 pt-8 border-t text-center text-sm text-gray-500\"><p>© <script>document.write(new Date().getFullYear())</script>ConceptCodes, LLC. All rights reserved.</p></div></div></footer>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

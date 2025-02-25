@@ -11,6 +11,8 @@ type TransactionRepository interface {
 	Create(transaction *models.Transaction) error
 	FindByHash(hash string) (*models.Transaction, error)
 	CreateAll(transactions []*models.Transaction) error
+	Count() (int64, error)
+	Recent(limit int) ([]*models.Transaction, error)
 }
 
 type GormTransactionRepository struct {
@@ -36,4 +38,16 @@ func (r *GormTransactionRepository) FindByHash(id string) (*models.Transaction, 
 
 func (r *GormTransactionRepository) CreateAll(transactions []*models.Transaction) error {
 	return r.db.Clauses(clause.OnConflict{DoNothing: true}).CreateInBatches(transactions, len(transactions)).Error
+}
+
+func (r *GormTransactionRepository) Count() (int64, error) {
+	var count int64
+	err := r.db.Model(&models.Transaction{}).Count(&count).Error
+	return count, err
+}
+
+func (r *GormTransactionRepository) Recent(limit int) ([]*models.Transaction, error) {
+	var transactions []*models.Transaction
+	err := r.db.Order("timestamp desc").Limit(limit).Find(&transactions).Error
+	return transactions, err
 }

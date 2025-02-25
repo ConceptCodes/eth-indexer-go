@@ -39,13 +39,15 @@ type Transaction struct {
 	Hash        string `gorm:"primaryKey;uniqueIndex"`
 	BlockNumber uint64 `gorm:"index"`
 
-	From     string
-	To       string
-	Value    string
-	GasPrice string
-	GasLimit uint64
-	GasUsed  uint64
-	Nonce    uint64
+	From      string
+	To        string
+	Value     string
+	GasPrice  string
+	GasLimit  uint64
+	GasUsed   uint64
+	Nonce     uint64
+	Timestamp uint64
+	Success   bool
 }
 
 func (t *Transaction) SimpleTransaction() SimpleTransaction {
