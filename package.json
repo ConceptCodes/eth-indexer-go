@@ -1,0 +1,31 @@
+{
+  "name": "crypto-cdc-go",
+  "version": "1.0.0",
+  "description": "An Ethereum Indexer",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ConceptCodes/eth-indexer-go.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ConceptCodes/eth-indexer-go/issues"
+  },
+  "homepage": "https://github.com/ConceptCodes/eth-indexer-go#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.8"
+  },
+  "dependencies": {
+    "postcss-cli": "^11.0.0"
+  }
+}

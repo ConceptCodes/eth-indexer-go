@@ -29,6 +29,11 @@ const (
 	OtpCodeMessage             = "Your OTP code is %s."
 	InternalServerErrorMessage = "Internal server error."
 
+	IndexViewEndpoint    = "/"
+	LoginViewEndpoint    = "/login"
+	RegisterViewEndpoint = "/register"
+	HomeViewEndpoint     = "/home"
+
 	ApiPrefix           = "/api/v1"
 	HealthCheckEndpoint = ApiPrefix + "/health/alive"
 	ReadinessEndpoint   = ApiPrefix + "/health/status"

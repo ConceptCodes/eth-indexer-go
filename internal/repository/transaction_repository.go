@@ -2,6 +2,7 @@ package repository
 
 import (
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/conceptcodes/eth-indexer-go/internal/models"
 )
@@ -34,5 +35,5 @@ func (r *GormTransactionRepository) FindByHash(id string) (*models.Transaction, 
 }
 
 func (r *GormTransactionRepository) CreateAll(transactions []*models.Transaction) error {
-	return r.db.CreateInBatches(transactions, len(transactions)).Error
+	return r.db.Clauses(clause.OnConflict{DoNothing: true}).CreateInBatches(transactions, len(transactions)).Error
 }

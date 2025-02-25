@@ -13,3 +13,17 @@ clear-db:
 	@echo "Clearing all rows from all tables..."
 	@psql -h $(HOST) -p $(PORT) -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "DO \$$\$ DECLARE r RECORD; BEGIN FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP EXECUTE 'TRUNCATE TABLE ' || quote_ident(r.tablename) || ' CASCADE'; END LOOP; END \$$\$;"
 	@echo "All rows cleared from all tables."
+
+build:
+	bunx @tailwindcss/cli -i public/css/input.css -o public/output.css
+	@templ generate view
+	@go build -o bin/crypto-cdc-go main.go 
+
+test:
+	@go test -v ./...
+	
+run: build
+	@./bin/crypto-cdc-go
+
+templ:
+	@templ generate -watch -proxy=http://localhost:8080

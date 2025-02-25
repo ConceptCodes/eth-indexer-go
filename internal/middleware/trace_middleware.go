@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
@@ -44,9 +45,14 @@ func (m *TraceRequestMiddleware) Start(next http.Handler) http.Handler {
 			constants.ForgotPasswordEndpoint,
 			constants.VerifyEmailEndpoint,
 			constants.ResetPasswordEndpoint,
+			constants.IndexViewEndpoint,
+			constants.LoginViewEndpoint,
+			constants.RegisterViewEndpoint,
+			constants.HomeViewEndpoint,
 		}
 
-		if !helpers.IsPathInIgnoreList(r.URL.Path, ignorePaths) {
+
+		if !helpers.IsPathInIgnoreList(r.URL.Path, ignorePaths) && !strings.HasPrefix(r.URL.Path, "/public") {
 			if apiKey == "" {
 				m.responseHelper.SendErrorResponse(w, "API key is required", constants.Unauthorized, nil)
 				return
@@ -66,7 +72,6 @@ func (m *TraceRequestMiddleware) Start(next http.Handler) http.Handler {
 		}
 
 		r = helpers.SetRequestId(r, requestId)
-
 		next.ServeHTTP(w, r)
 	})
 }

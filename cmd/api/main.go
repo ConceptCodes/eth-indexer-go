@@ -96,6 +96,7 @@ func (a *Api) Start() error {
 	blockHandler := handlers.NewBlockHandler(a.logger, a.blockRepo, responseHelper)
 	transactionHandler := handlers.NewTransactionHandler(a.transactionRepo, a.logger, responseHelper)
 	eventsHandler := handlers.NewEventHandler(a.logger, a.eventLogRepo, responseHelper)
+	viewHandler := handlers.NewViewHandler()
 
 	router.HandleFunc(constants.RegisterEndpoint, userHandler.RegisterUserHandler).Methods(http.MethodPost)
 	router.HandleFunc(constants.LoginEndpoint, userHandler.LoginUserHandler).Methods(http.MethodPost)
@@ -108,6 +109,13 @@ func (a *Api) Start() error {
 	router.HandleFunc(constants.GetBlockByNumberEndpoint, blockHandler.GetBlockByNumberHandler).Methods(http.MethodGet)
 	router.HandleFunc(constants.GetTransactionsByHashEndpoint, transactionHandler.GetTransactionByHashHandler).Methods(http.MethodGet)
 	router.HandleFunc(constants.GetEventsByContractAddressEndpoint, eventsHandler.GetEventLogsByAddressHandler).Methods(http.MethodGet)
+
+	router.HandleFunc(constants.IndexViewEndpoint, viewHandler.GetIndexHandler).Methods(http.MethodGet)
+	
+
+	router.PathPrefix("/public/").Handler(
+		http.StripPrefix("/public/", http.FileServer(http.Dir("public"))),
+	)
 
 	srv := &http.Server{
 		Handler:      router,
