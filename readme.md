@@ -11,8 +11,7 @@ Probably not. If you need a robust, production-grade solution, I’d recommend u
 This project was built purely for fun and experimentation. If you're interested in playing around with Ethereum data locally, I’d suggest running this indexer with a testnet like Sepolia or Holesky.
 
 ## Architecture
-
-![Architecture](https://raw.githubusercontent.com/conceptcodes/ethereum-indexer/main/images/architecture.png)
+![Architecture](https://i.imgur.com/1Z2Z2Zz.png)
 
 ## Tech Stack
 - [Golang](https://golang.org/)
@@ -26,8 +25,11 @@ This project was built purely for fun and experimentation. If you're interested 
 - [Docker Compose](https://docs.docker.com/compose/)
 - [Redis](https://redis.io/)
 - [Htmx](https://htmx.org/)
+---
 
-![Preview](https://i.imgur.com/8bPr5t7.png)
+<center>
+  <img src="https://i.imgur.com/N0CHCSd.gif" alt="Demo" />
+</center>
 
 ## Roadmap
 - [x] Add authentication for the API
