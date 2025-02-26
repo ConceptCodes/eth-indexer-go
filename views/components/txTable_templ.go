@@ -14,7 +14,7 @@ import (
 	"strconv"
 )
 
-func TransactionTable(txs []models.SimpleTransaction, showBlockNumber, pagination bool) templ.Component {
+func TransactionTable(txs []models.SimpleTransaction, showBlockNumber, pagination bool, currentPage, totalPages int64) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -99,7 +99,7 @@ func TransactionTable(txs []models.SimpleTransaction, showBlockNumber, paginatio
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var5 templ.SafeURL = templ.SafeURL("/address/" + tx.From)
+			var templ_7745c5c3_Var5 templ.SafeURL = templ.SafeURL("/account/" + tx.From)
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var5)))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -121,7 +121,7 @@ func TransactionTable(txs []models.SimpleTransaction, showBlockNumber, paginatio
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var7 templ.SafeURL = templ.SafeURL("/address/" + tx.To)
+			var templ_7745c5c3_Var7 templ.SafeURL = templ.SafeURL("/account/" + tx.To)
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var7)))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -162,7 +162,98 @@ func TransactionTable(txs []models.SimpleTransaction, showBlockNumber, paginatio
 			return templ_7745c5c3_Err
 		}
 		if pagination {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6\"><!-- Items per page --><div class=\"flex items-center space-x-2\"><span class=\"text-sm text-gray-500\">Show</span> <select class=\"border rounded px-2 py-1 text-sm\"><option>25</option> <option>50</option> <option>100</option></select> <span class=\"text-sm text-gray-500\">entries</span></div><!-- Page info --><div class=\"text-sm text-gray-500\">Showing 1 to 25 of 150 transactions</div><!-- Pagination controls --><div class=\"flex items-center space-x-2\"><button class=\"px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed\" disabled><i data-lucide=\"chevrons-left\" class=\"h-4 w-4\"></i> <span class=\"hidden sm:inline\">First</span></button> <button class=\"px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed\" disabled><i data-lucide=\"chevron-left\" class=\"h-4 w-4\"></i> <span class=\"hidden sm:inline\">Previous</span></button><div class=\"flex items-center space-x-1\"><button class=\"px-3 py-1 border rounded bg-indigo-50 text-indigo-600 font-medium\">1</button> <button class=\"px-3 py-1 border rounded hover:bg-gray-50\">2</button> <button class=\"px-3 py-1 border rounded hover:bg-gray-50\">3</button> <span class=\"px-2\">...</span> <button class=\"px-3 py-1 border rounded hover:bg-gray-50\">6</button></div><button class=\"px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1\"><span class=\"hidden sm:inline\">Next</span> <i data-lucide=\"chevron-right\" class=\"h-4 w-4\"></i></button> <button class=\"px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1\"><span class=\"hidden sm:inline\">Last</span> <i data-lucide=\"chevrons-right\" class=\"h-4 w-4\"></i></button></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6\"><!-- Items per page --><div class=\"flex items-center space-x-2\"><span class=\"text-sm text-gray-500\">Show</span> <select class=\"border rounded px-2 py-1 text-sm\"><option>25</option> <option>50</option> <option>100</option></select> <span class=\"text-sm text-gray-500\">entries</span></div><!-- Page info --><div class=\"text-sm text-gray-500\">Showing ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var10 string
+			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(currentPage, 10))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/txTable.templ`, Line: 67, Col: 55}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, " to ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var11 string
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(totalPages, 10))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/txTable.templ`, Line: 67, Col: 94}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " of ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var12 string
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(int64(len(txs)), 10))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/txTable.templ`, Line: 67, Col: 138}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " transactions</div><!-- Pagination controls --><div class=\"flex items-center space-x-2\"><button class=\"px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed\" hx-get=\"/block/{blockNumber}?page=1&amp;size={pageSize}\" hx-target=\"#transaction-table\" hx-swap=\"outerHTML\"><i data-lucide=\"chevrons-left\" class=\"h-4 w-4\"></i> <span class=\"hidden sm:inline\">First</span></button> <button class=\"px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed\" hx-get=\"/block/{blockNumber}?page={currentPage-1}&amp;size={pageSize}\" hx-target=\"#transaction-table\" hx-swap=\"outerHTML\"><i data-lucide=\"chevron-left\" class=\"h-4 w-4\"></i> <span class=\"hidden sm:inline\">Previous</span></button><div class=\"flex items-center space-x-1\"><button class=\"px-3 py-1 border rounded bg-indigo-50 text-indigo-600 font-medium\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var13 string
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(currentPage, 10))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/txTable.templ`, Line: 82, Col: 135}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</button> <button class=\"px-3 py-1 border rounded hover:bg-gray-50\" hx-get=\"/block/{blockNumber}?page={currentPage+1}&amp;size={pageSize}\" hx-target=\"#transaction-table\" hx-swap=\"outerHTML\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var14 string
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(currentPage+1, 10))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/txTable.templ`, Line: 83, Col: 231}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</button> <button class=\"px-3 py-1 border rounded hover:bg-gray-50\" hx-get=\"/block/{blockNumber}?page={currentPage+2}&amp;size={pageSize}\" hx-target=\"#transaction-table\" hx-swap=\"outerHTML\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var15 string
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(currentPage+2, 10))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/txTable.templ`, Line: 84, Col: 231}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</button> <span class=\"px-2\">...</span> <button class=\"px-3 py-1 border rounded hover:bg-gray-50\" hx-get=\"/block/{blockNumber}?page={totalPages}&amp;size={pageSize}\" hx-target=\"#transaction-table\" hx-swap=\"outerHTML\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var16 string
+			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(totalPages+1, 10))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/txTable.templ`, Line: 86, Col: 227}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</button></div><button class=\"px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1\" hx-get=\"/block/{blockNumber}?page={currentPage+1}&amp;size={pageSize}\" hx-target=\"#transaction-table\" hx-swap=\"outerHTML\"><span class=\"hidden sm:inline\">Next</span> <i data-lucide=\"chevron-right\" class=\"h-4 w-4\"></i></button> <button class=\"px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1\" hx-get=\"/block/{blockNumber}?page={totalPages}&amp;size={pageSize}\" hx-target=\"#transaction-table\" hx-swap=\"outerHTML\"><span class=\"hidden sm:inline\">Last</span> <i data-lucide=\"chevrons-right\" class=\"h-4 w-4\"></i></button></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

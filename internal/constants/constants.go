@@ -33,7 +33,6 @@ const (
 	IndexViewEndpoint       = "/"
 	LoginViewEndpoint       = "/login"
 	RegisterViewEndpoint    = "/register"
-	HomeViewEndpoint        = "/home"
 	TransactionViewEndpoint = "/tx/{hash:0x[0-9a-fA-F]{64}}"
 	AccountViewEndpoint     = "/account/{address:0x[0-9a-fA-F]{40}}"
 	BlockViewEndpoint       = "/block/{blockNumber:[0-9]+}"

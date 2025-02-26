@@ -22,6 +22,7 @@ type Block struct {
 	GasUsed      uint64
 	GasLimit     uint64
 	Difficulty   int64
+	BlockReward  string
 }
 
 func (b *Block) SimpleBlock() SimpleBlock {
@@ -47,23 +48,25 @@ type Transaction struct {
 	Hash        string `gorm:"primaryKey;uniqueIndex"`
 	BlockNumber uint64 `gorm:"index"`
 
-	From      string
-	To        string
-	Value     string
-	GasPrice  string
-	GasLimit  uint64
-	GasUsed   uint64
-	Nonce     uint64
-	Timestamp uint64
-	Success   bool
+	FromAddress string
+	ToAddress   string
+	Value       string
+	GasPrice    string
+	GasLimit    uint64
+	GasUsed     uint64
+	Nonce       uint64
+	Timestamp   uint64
+	Success     bool
+	InputData   string
+	Fee         string
 }
 
 func (t *Transaction) SimpleTransaction() SimpleTransaction {
 	return SimpleTransaction{
 		Hash:        t.Hash,
 		BlockNumber: t.BlockNumber,
-		From:        t.From,
-		To:          t.To,
+		From:        t.FromAddress,
+		To:          t.ToAddress,
 		Value:       t.Value,
 		GasPrice:    t.GasPrice,
 		GasLimit:    t.GasLimit,

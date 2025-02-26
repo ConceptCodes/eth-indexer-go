@@ -14,6 +14,7 @@ type TransactionRepository interface {
 	Count() (int64, error)
 	Recent(limit int) ([]*models.Transaction, error)
 	FindByBlockNumber(blockNumber uint64, pageNumber, pageSize int) ([]*models.Transaction, error)
+	FindByFromAccount(address string, pageNumber, pageSize int) ([]*models.Transaction, error)
 }
 
 type GormTransactionRepository struct {
@@ -56,5 +57,11 @@ func (r *GormTransactionRepository) Recent(limit int) ([]*models.Transaction, er
 func (r *GormTransactionRepository) FindByBlockNumber(blockNumber uint64, pageNumber, pageSize int) ([]*models.Transaction, error) {
 	var transactions []*models.Transaction
 	err := r.db.Where("block_number = ?", blockNumber).Offset((pageNumber - 1) * pageSize).Limit(pageSize).Find(&transactions).Error
+	return transactions, err
+}
+
+func (r *GormTransactionRepository) FindByFromAccount(address string, pageNumber, pageSize int) ([]*models.Transaction, error) {
+	var transactions []*models.Transaction
+	err := r.db.Where("from_address = ?", address).Offset((pageNumber - 1) * pageSize).Limit(pageSize).Find(&transactions).Error
 	return transactions, err
 }

@@ -14,6 +14,20 @@ This project was built purely for fun and experimentation. If you're interested 
 
 ![Architecture](https://raw.githubusercontent.com/conceptcodes/ethereum-indexer/main/images/architecture.png)
 
+## Tech Stack
+- [Golang](https://golang.org/)
+  - [Gorilla Mux](github.com/gorilla/mux)
+  - [Gorm](github.com/go-gorm/gorm)
+  - [ZeroLog](github.com/rs/zerolog/log)
+  - [Ethclient](github.com/ethereum/go-ethereum/ethclient)
+  - [Templ](github.com/a-h/templ) w/ [Tailwindcss](https://tailwindcss.com/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- [Redis](https://redis.io/)
+- [Htmx](https://htmx.org/)
+
+![Preview](https://i.imgur.com/8bPr5t7.png)
 
 ## Roadmap
 - [x] Add authentication for the API

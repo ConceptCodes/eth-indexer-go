@@ -8,7 +8,7 @@ import (
   "github.com/conceptcodes/eth-indexer-go/views/components"
 )
 
-templ Transaction(tx *models.Transaction) {
+templ Transaction(tx models.Transaction) {
   @Page() {
     <div class="bg-gray-50">
       <!-- Navigation -->
@@ -85,7 +85,7 @@ templ Transaction(tx *models.Transaction) {
                           <div class="text-gray-600">From:</div>
                           <div class="md:col-span-2">
                               <div class="flex items-center space-x-2">
-                                  <a href={templ.SafeURL("/account/" + tx.From)} class="text-indigo-600 hover:text-indigo-700 font-mono">{tx.From}</a>
+                                  <a href={templ.SafeURL("/account/" + tx.FromAddress)} class="text-indigo-600 hover:text-indigo-700 font-mono">{tx.FromAddress}</a>
                                   <button class="text-gray-400 hover:text-gray-600">
                                       <i data-lucide="copy" class="h-4 w-4"></i>
                                   </button>
@@ -98,7 +98,7 @@ templ Transaction(tx *models.Transaction) {
                           <div class="text-gray-600">To:</div>
                           <div class="md:col-span-2">
                               <div class="flex items-center space-x-2">
-                                  <a href={templ.SafeURL("/account/" + tx.To)} class="text-indigo-600 hover:text-indigo-700 font-mono">{tx.To}</a>
+                                  <a href={templ.SafeURL("/account/" + tx.ToAddress)} class="text-indigo-600 hover:text-indigo-700 font-mono">{tx.ToAddress}</a>
                                   <button class="text-gray-400 hover:text-gray-600">
                                       <i data-lucide="copy" class="h-4 w-4"></i>
                                   </button>
@@ -139,7 +139,7 @@ templ Transaction(tx *models.Transaction) {
                           <div class="md:col-span-2">
                               <div class="flex items-center space-x-2">
                                   <span class="text-gray-900">{helpers.FormatWeiValue(tx.GasPrice)} Gwei</span>
-                                  <span class="text-gray-500">(helpers.FormatEthValue(tx.GasPrice) ETH)</span>
+                                  <span class="text-gray-500">({helpers.FormatEthValue(tx.GasPrice)} ETH)</span>
                               </div>
                           </div>
                       </div>
@@ -170,7 +170,7 @@ templ Transaction(tx *models.Transaction) {
                           <div class="text-gray-600">Input Data:</div>
                           <div class="md:col-span-2">
                               <div class="font-mono bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto">
-                                  0x
+                                  {tx.InputData}
                               </div>
                           </div>
                       </div>

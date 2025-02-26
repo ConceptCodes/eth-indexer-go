@@ -139,7 +139,7 @@ func Transaction(tx *models.Transaction) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var7 templ.SafeURL = templ.SafeURL("/account/" + tx.From)
+			var templ_7745c5c3_Var7 templ.SafeURL = templ.SafeURL("/account/" + tx.FromAddress)
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var7)))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -149,9 +149,9 @@ func Transaction(tx *models.Transaction) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(tx.From)
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(tx.FromAddress)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/transaction.templ`, Line: 88, Col: 145}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/transaction.templ`, Line: 88, Col: 159}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -161,7 +161,7 @@ func Transaction(tx *models.Transaction) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var9 templ.SafeURL = templ.SafeURL("/account/" + tx.To)
+			var templ_7745c5c3_Var9 templ.SafeURL = templ.SafeURL("/account/" + tx.ToAddress)
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var9)))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -171,9 +171,9 @@ func Transaction(tx *models.Transaction) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(tx.To)
+			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(tx.ToAddress)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/transaction.templ`, Line: 101, Col: 141}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/transaction.templ`, Line: 101, Col: 155}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -205,59 +205,85 @@ func Transaction(tx *models.Transaction) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " Gwei</span> <span class=\"text-gray-500\">(helpers.FormatEthValue(tx.GasPrice) ETH)</span></div></div></div><!-- Gas Limit & Usage --><div class=\"grid grid-cols-1 md:grid-cols-3 gap-4\"><div class=\"text-gray-600\">Gas Limit & Usage:</div><div class=\"md:col-span-2\"><span class=\"text-gray-900\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " Gwei</span> <span class=\"text-gray-500\">(")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var13 string
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatUint(tx.GasLimit, 10))
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(helpers.FormatEthValue(tx.GasPrice))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/transaction.templ`, Line: 151, Col: 94}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/transaction.templ`, Line: 142, Col: 99}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " | ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " ETH)</span></div></div></div><!-- Gas Limit & Usage --><div class=\"grid grid-cols-1 md:grid-cols-3 gap-4\"><div class=\"text-gray-600\">Gas Limit & Usage:</div><div class=\"md:col-span-2\"><span class=\"text-gray-900\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatUint(tx.GasUsed, 10))
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatUint(tx.GasLimit, 10))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/transaction.templ`, Line: 151, Col: 133}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/transaction.templ`, Line: 151, Col: 94}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, " (")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, " | ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var15 string
-			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatUint(((tx.GasUsed / tx.GasLimit) * 100), 10))
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatUint(tx.GasUsed, 10))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/transaction.templ`, Line: 151, Col: 195}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/transaction.templ`, Line: 151, Col: 133}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, ")%</span></div></div></div></div><!-- More Details --><div class=\"p-6\"><div class=\"space-y-4\"><!-- Nonce --><div class=\"grid grid-cols-1 md:grid-cols-3 gap-4\"><div class=\"text-gray-600\">Nonce:</div><div class=\"md:col-span-2\"><span class=\"text-gray-900\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, " (")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var16 string
-			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatUint(tx.Nonce, 10))
+			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatUint(((tx.GasUsed / tx.GasLimit) * 100), 10))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/transaction.templ`, Line: 164, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/transaction.templ`, Line: 151, Col: 195}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</span></div></div><!-- Input Data --><div class=\"grid grid-cols-1 md:grid-cols-3 gap-4\"><div class=\"text-gray-600\">Input Data:</div><div class=\"md:col-span-2\"><div class=\"font-mono bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto\">0x</div></div></div></div></div></div></main></div><!-- Footer --> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, ")%</span></div></div></div></div><!-- More Details --><div class=\"p-6\"><div class=\"space-y-4\"><!-- Nonce --><div class=\"grid grid-cols-1 md:grid-cols-3 gap-4\"><div class=\"text-gray-600\">Nonce:</div><div class=\"md:col-span-2\"><span class=\"text-gray-900\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var17 string
+			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatUint(tx.Nonce, 10))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/transaction.templ`, Line: 164, Col: 91}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</span></div></div><!-- Input Data --><div class=\"grid grid-cols-1 md:grid-cols-3 gap-4\"><div class=\"text-gray-600\">Input Data:</div><div class=\"md:col-span-2\"><div class=\"font-mono bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var18 string
+			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(tx.InputData)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/transaction.templ`, Line: 173, Col: 47}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div></div></div></div></div></div></main></div><!-- Footer --> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

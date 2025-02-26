@@ -7,6 +7,9 @@ import (
 )
 
 func TruncateHash(hash string) string {
+	if len(hash) < 16 {
+		return hash
+	}
 	return hash[:8] + "..." + hash[len(hash)-8:]
 }
 
@@ -20,7 +23,7 @@ func FormatEthValue(value string) string {
 	}
 	ethValue := new(big.Float).SetInt(weiValue)
 	ethValue = ethValue.Quo(ethValue, big.NewFloat(1e18))
-	return ethValue.Text('f', 18)
+	return ethValue.Text('f', 6)
 }
 
 func FormatWeiValue(value string) string {
@@ -46,4 +49,8 @@ func IsAccountAddress(address string) bool {
 		return false
 	}
 	return true
+}
+
+func ConvertSizeToKb(size uint64) float64 {
+	return float64(size) / 1024
 }

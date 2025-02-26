@@ -8,9 +8,14 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/conceptcodes/eth-indexer-go/views/components"
+import (
+	"strconv"
 
-func Index() templ.Component {
+	"github.com/conceptcodes/eth-indexer-go/internal/models"
+	"github.com/conceptcodes/eth-indexer-go/views/components"
+)
+
+func Index(data models.HomeData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -43,7 +48,62 @@ func Index() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Navigation --> <nav class=\"fixed w-full bg-white/80 backdrop-blur-sm z-50 border-b\"><div class=\"container mx-auto px-4\"><div class=\"flex items-center justify-between h-16\"><a href=\"#\" class=\"text-xl font-bold\">Ethereum Indexer</a><div class=\"hidden md:flex space-x-8\"><a href=\"#features\" class=\"text-gray-600 hover:text-gray-900\">Features</a> <a href=\"#how-it-works\" class=\"text-gray-600 hover:text-gray-900\">How it Works</a></div><a href=\"/home\" class=\"bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-colors\">Get Started</a></div></div></nav><!-- Hero Section --> <section class=\"pt-32 pb-20 gradient-bg\"><div class=\"container mx-auto px-4\"><div class=\"flex flex-col md:flex-row items-center\"><div class=\"md:w-1/2 text-center md:text-left\"><h1 class=\"text-4xl md:text-6xl font-bold text-white mb-6\">Build Something Amazing Today</h1><p class=\"text-lg text-indigo-100 mb-8\">Launch your project with our powerful platform. Fast, secure, and scalable solutions for modern web applications.</p><div class=\"flex flex-col sm:flex-row gap-4 justify-center md:justify-start\"><a href=\"/home\" class=\"bg-white text-indigo-600 px-8 py-3 rounded-full font-medium hover:bg-gray-100 transition-colors\">Get Started</a> <button class=\"border border-white text-white px-8 py-3 rounded-full font-medium hover:bg-white/10 transition-colors\">Learn More</button></div></div><div class=\"md:w-1/2 mt-12 md:mt-0\"><img src=\"https://via.placeholder.com/600x400\" alt=\"Hero Image\" class=\"rounded-lg shadow-2xl\"></div></div></div></section><!-- Features Section --> <section id=\"features\" class=\"py-20\"><div class=\"container mx-auto px-4\"><div class=\"text-center mb-16\"><h2 class=\"text-3xl font-bold mb-4\">Why Choose Us</h2><p class=\"text-gray-600 max-w-2xl mx-auto\">We provide the tools and features you need to build exceptional products.</p></div><div class=\"grid md:grid-cols-3 gap-8\"><div class=\"p-6 border rounded-xl hover:shadow-lg transition-shadow\"><div class=\"w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4\"><i data-lucide=\"zap\" class=\"w-6 h-6 text-indigo-600\"></i></div><h3 class=\"text-xl font-semibold mb-2\">Lightning Fast</h3><p class=\"text-gray-600\">Optimized for speed and performance, ensuring your applications run smoothly.</p></div><div class=\"p-6 border rounded-xl hover:shadow-lg transition-shadow\"><div class=\"w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4\"><i data-lucide=\"shield\" class=\"w-6 h-6 text-indigo-600\"></i></div><h3 class=\"text-xl font-semibold mb-2\">Secure by Default</h3><p class=\"text-gray-600\">Built-in security features to protect your data and users.</p></div><div class=\"p-6 border rounded-xl hover:shadow-lg transition-shadow\"><div class=\"w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4\"><i data-lucide=\"settings\" class=\"w-6 h-6 text-indigo-600\"></i></div><h3 class=\"text-xl font-semibold mb-2\">Easy to Use</h3><p class=\"text-gray-600\">Intuitive interface and comprehensive documentation for quick setup.</p></div></div></div></section><!-- How it Works --> <section id=\"how-it-works\" class=\"py-20 bg-gray-50\"><div class=\"container mx-auto px-4\"><div class=\"text-center mb-16\"><h2 class=\"text-3xl font-bold mb-4\">How It Works</h2><p class=\"text-gray-600 max-w-2xl mx-auto\">Get started in just a few simple steps</p></div><div class=\"grid md:grid-cols-4 gap-8\"><div class=\"text-center\"><div class=\"w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold mx-auto mb-4\">1</div><h3 class=\"font-semibold mb-2\">Sign Up</h3><p class=\"text-gray-600\">Create your account in seconds</p></div><div class=\"text-center\"><div class=\"w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold mx-auto mb-4\">2</div><h3 class=\"font-semibold mb-2\">Configure</h3><p class=\"text-gray-600\">Set up your preferences</p></div><div class=\"text-center\"><div class=\"w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold mx-auto mb-4\">3</div><h3 class=\"font-semibold mb-2\">Deploy</h3><p class=\"text-gray-600\">Launch your application</p></div><div class=\"text-center\"><div class=\"w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold mx-auto mb-4\">4</div><h3 class=\"font-semibold mb-2\">Scale</h3><p class=\"text-gray-600\">Grow with your needs</p></div></div></div></section><!-- Footer --> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Navigation --> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Nav().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " <!-- Hero Section --> <section class=\"py-12 border-b bg-gray-50\"><div class=\"container mx-auto px-4\"><h1 class=\"text-3xl font-bold mb-8\">Ethereum Blockchain Explorer</h1><div class=\"grid grid-cols-1 md:grid-cols-3 gap-6\"><div class=\"bg-white p-6 rounded-lg border\"><div class=\"flex items-center space-x-2 mb-2\"><i data-lucide=\"blocks\" class=\"h-5 w-5 text-gray-500\"></i><h3 class=\"text-sm font-medium text-gray-500\">TOTAL BLOCKS</h3></div><p class=\"text-2xl font-bold\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(data.BlockCount, 10))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/index.templ`, Line: 25, Col: 89}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p></div><div class=\"bg-white p-6 rounded-lg border\"><div class=\"flex items-center space-x-2 mb-2\"><i data-lucide=\"clock\" class=\"h-5 w-5 text-gray-500\"></i><h3 class=\"text-sm font-medium text-gray-500\">AVG BLOCK TIME</h3></div><p class=\"text-2xl font-bold\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatUint(data.AvgBlockTime, 10))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/index.templ`, Line: 33, Col: 62}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "s</p></div><div class=\"bg-white p-6 rounded-lg border\"><div class=\"flex items-center space-x-2 mb-2\"><i data-lucide=\"wallet\" class=\"h-5 w-5 text-gray-500\"></i><h3 class=\"text-sm font-medium text-gray-500\">TOTAL TRANSACTIONS</h3></div><p class=\"text-2xl font-bold\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var5 string
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(data.TxCount, 10))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/index.templ`, Line: 40, Col: 86}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p></div></div></div></section><!-- Recent Transactions --> <section class=\"py-12\"><div class=\"container mx-auto px-4\"><h2 class=\"text-2xl font-bold mb-6\">Recent Transactions</h2>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.TransactionTable(data.Transactions, true, false, 0, 0).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></section><!-- Footer --> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

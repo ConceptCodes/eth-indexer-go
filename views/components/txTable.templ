@@ -3,10 +3,10 @@ package components
 import (
   "github.com/conceptcodes/eth-indexer-go/internal/models"
   "github.com/conceptcodes/eth-indexer-go/internal/helpers"
-	"strconv"
+    "strconv"
 )
 
-templ TransactionTable(txs []models.SimpleTransaction, showBlockNumber, pagination bool) {
+templ TransactionTable(txs []models.SimpleTransaction, showBlockNumber, pagination bool, currentPage, totalPages int64) {
   <div class="overflow-x-auto">
     <table class="w-full">
         <thead>
@@ -32,12 +32,12 @@ templ TransactionTable(txs []models.SimpleTransaction, showBlockNumber, paginati
                   <td class="px-6 py-4">{strconv.FormatUint(tx.BlockNumber, 10)}</td>
                 }
                 <td class="px-6 py-4">
-                    <a href={templ.SafeURL("/address/" + tx.From)} class="text-indigo-600 hover:text-indigo-700 font-mono">
+                    <a href={templ.SafeURL("/account/" + tx.From)} class="text-indigo-600 hover:text-indigo-700 font-mono">
                     {helpers.TruncateHash(tx.From)}
                     </a>
                 </td>
                 <td class="px-6 py-4">
-                    <a href={templ.SafeURL("/address/" + tx.To)} class="text-indigo-600 hover:text-indigo-700 font-mono">
+                    <a href={templ.SafeURL("/account/" + tx.To)} class="text-indigo-600 hover:text-indigo-700 font-mono">
                     {helpers.TruncateHash(tx.To)}
                     </a>
                 </td>
@@ -64,33 +64,33 @@ templ TransactionTable(txs []models.SimpleTransaction, showBlockNumber, paginati
 
         <!-- Page info -->
         <div class="text-sm text-gray-500">
-            Showing 1 to 25 of {strconv.FormatInt(int64(len(txs)), 10)} transactions
+            Showing {strconv.FormatInt(currentPage, 10)} to {strconv.FormatInt(totalPages, 10)} of {strconv.FormatInt(int64(len(txs)), 10)} transactions
         </div>
 
         <!-- Pagination controls -->
           <div class="flex items-center space-x-2">
-              <button class="px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+              <button class="px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed" hx-get="/block/{blockNumber}?page=1&size={pageSize}" hx-target="#transaction-table" hx-swap="outerHTML">
                   <i data-lucide="chevrons-left" class="h-4 w-4"></i>
                   <span class="hidden sm:inline">First</span>
               </button>
-              <button class="px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+              <button class="px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed" hx-get="/block/{blockNumber}?page={currentPage-1}&size={pageSize}" hx-target="#transaction-table" hx-swap="outerHTML">
                   <i data-lucide="chevron-left" class="h-4 w-4"></i>
                   <span class="hidden sm:inline">Previous</span>
               </button>
               
               <div class="flex items-center space-x-1">
-                  <button class="px-3 py-1 border rounded bg-indigo-50 text-indigo-600 font-medium">1</button>
-                  <button class="px-3 py-1 border rounded hover:bg-gray-50">2</button>
-                  <button class="px-3 py-1 border rounded hover:bg-gray-50">3</button>
+                  <button class="px-3 py-1 border rounded bg-indigo-50 text-indigo-600 font-medium">{strconv.FormatInt(currentPage, 10)}</button>
+                  <button class="px-3 py-1 border rounded hover:bg-gray-50" hx-get="/block/{blockNumber}?page={currentPage+1}&size={pageSize}" hx-target="#transaction-table" hx-swap="outerHTML">{strconv.FormatInt(currentPage+1, 10)}</button>
+                  <button class="px-3 py-1 border rounded hover:bg-gray-50" hx-get="/block/{blockNumber}?page={currentPage+2}&size={pageSize}" hx-target="#transaction-table" hx-swap="outerHTML">{strconv.FormatInt(currentPage+2, 10)}</button>
                   <span class="px-2">...</span>
-                  <button class="px-3 py-1 border rounded hover:bg-gray-50">6</button>
+                  <button class="px-3 py-1 border rounded hover:bg-gray-50" hx-get="/block/{blockNumber}?page={totalPages}&size={pageSize}" hx-target="#transaction-table" hx-swap="outerHTML">{strconv.FormatInt(totalPages+1, 10)}</button>
               </div>
 
-              <button class="px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1">
+              <button class="px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1" hx-get="/block/{blockNumber}?page={currentPage+1}&size={pageSize}" hx-target="#transaction-table" hx-swap="outerHTML">
                   <span class="hidden sm:inline">Next</span>
                   <i data-lucide="chevron-right" class="h-4 w-4"></i>
               </button>
-              <button class="px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1">
+              <button class="px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1" hx-get="/block/{blockNumber}?page={totalPages}&size={pageSize}" hx-target="#transaction-table" hx-swap="outerHTML">
                   <span class="hidden sm:inline">Last</span>
                   <i data-lucide="chevrons-right" class="h-4 w-4"></i>
               </button>

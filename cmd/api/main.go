@@ -110,10 +110,10 @@ func (a *Api) Start() error {
 	router.HandleFunc(constants.GetTransactionsByHashEndpoint, transactionHandler.GetTransactionByHashHandler).Methods(http.MethodGet)
 	router.HandleFunc(constants.GetEventsByContractAddressEndpoint, eventsHandler.GetEventLogsByAddressHandler).Methods(http.MethodGet)
 
-	router.HandleFunc(constants.IndexViewEndpoint, viewHandler.GetIndexHandler).Methods(http.MethodGet)
-	router.HandleFunc(constants.HomeViewEndpoint, viewHandler.GetHomeHandler).Methods(http.MethodGet)
+	router.HandleFunc(constants.IndexViewEndpoint, viewHandler.GetHomeHandler).Methods(http.MethodGet)
 	router.HandleFunc(constants.TransactionViewEndpoint, viewHandler.GetTransactionHandler).Methods(http.MethodGet)
 	router.HandleFunc(constants.BlockViewEndpoint, viewHandler.GetBlockHandler).Methods(http.MethodGet)
+	router.HandleFunc(constants.AccountViewEndpoint, viewHandler.GetAccountHandler).Methods(http.MethodGet)
 
 	router.NotFoundHandler = http.HandlerFunc(viewHandler.Get404Handler)
 

@@ -8,8 +8,9 @@ import (
 	"sync"
 	"time"
 	"unicode/utf8"
-	"gorm.io/gorm"
+
 	"github.com/rs/zerolog"
+	"gorm.io/gorm"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
@@ -19,7 +20,6 @@ import (
 	"github.com/conceptcodes/eth-indexer-go/config"
 	"github.com/conceptcodes/eth-indexer-go/internal/models"
 	"github.com/conceptcodes/eth-indexer-go/internal/repository"
-
 )
 
 var blockQueue = make(chan uint64, 100)
@@ -172,6 +172,7 @@ func (s *Subscriber) processBlock(blockNumber uint64) {
 }
 
 func (s *Subscriber) storeBlock(block *types.Block) {
+
 	blockData := models.Block{
 		Number:     block.NumberU64(),
 		Hash:       block.Hash().Hex(),
@@ -239,11 +240,13 @@ func (s *Subscriber) processTransactions(block *types.Block) {
 			continue
 		}
 
+		fee := new(big.Int).Mul(tx.GasPrice(), new(big.Int).SetUint64(receipt.GasUsed))
+
 		transaction := models.Transaction{
 			Hash:        tx.Hash().Hex(),
 			BlockNumber: block.NumberU64(),
-			From:        msg.Hex(),
-			To:          toAddress,
+			FromAddress: msg.Hex(),
+			ToAddress:   toAddress,
 			Value:       tx.Value().String(),
 			GasPrice:    tx.GasPrice().String(),
 			GasLimit:    tx.Gas(),
@@ -251,8 +254,9 @@ func (s *Subscriber) processTransactions(block *types.Block) {
 			Nonce:       tx.Nonce(),
 			Timestamp:   block.Time(),
 			Success:     types.ReceiptStatusSuccessful == receipt.Status,
+			InputData:   sanitizeData(tx.Data()),
+			Fee:         fee.String(),
 		}
-
 
 		transactions = append(transactions, &transaction)
 	}
@@ -291,7 +295,7 @@ func (s *Subscriber) processEvents(block *types.Block) {
 			BlockNumber:     block.NumberU64(),
 			Address:         vLog.Address.Hex(),
 			Topics:          mapTopics(vLog.Topics),
-			// Data:            sanitizeData(vLog.Data),
+			Data:            sanitizeData(vLog.Data),
 		}
 	}
 
