@@ -41,6 +41,9 @@
 .min-h-screen {
   min-height: 100vh;
 }
+.w-4\/5 {
+  width: calc(4/5 * 100%);
+}
 .w-full {
   width: 100%;
 }
@@ -122,6 +125,16 @@
   &:focus {
     --tw-outline-style: none;
     outline-style: none;
+  }
+}
+.disabled\:cursor-not-allowed {
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+.disabled\:opacity-50 {
+  &:disabled {
+    opacity: 50%;
   }
 }
 html {

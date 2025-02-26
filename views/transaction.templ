@@ -5,179 +5,181 @@ import (
   
   "github.com/conceptcodes/eth-indexer-go/internal/models"
   "github.com/conceptcodes/eth-indexer-go/internal/helpers"
+  "github.com/conceptcodes/eth-indexer-go/views/components"
 )
 
 templ Transaction(tx *models.Transaction) {
   @Page() {
     <div class="bg-gray-50">
-    <!-- Navigation -->
-    views.Nav()
+      <!-- Navigation -->
+      @components.Nav()
+      <!-- Main Content -->
+      <main class="container mx-auto px-4 py-8">
+          <!-- Transaction Title -->
+          <div class="mb-6">
+              <h1 class="text-2xl font-bold mb-2">Transaction Details</h1>
+              <div class="flex items-center space-x-2">
+                if tx.Success {
+                  <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">Success</span>
+                } else {
+                  <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">Failed</span>
+                }
+                  // <span class="text-gray-500">2 Block Confirmations</span>
+              </div>
+          </div>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
-        <!-- Transaction Title -->
-        <div class="mb-6">
-            <h1 class="text-2xl font-bold mb-2">Transaction Details</h1>
-            <div class="flex items-center space-x-2">
-              if tx.Success {
-                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">Success</span>
-              } else {
-                <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">Failed</span>
-              }
-                // <span class="text-gray-500">2 Block Confirmations</span>
-            </div>
-        </div>
+          <!-- Transaction Card -->
+          <div class="bg-white rounded-lg shadow-sm border">
+              <!-- Overview Section -->
+              <div class="p-6 border-b">
+                  <div class="space-y-4">
+                      <!-- Transaction Hash -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="text-gray-600">Transaction Hash:</div>
+                          <div class="md:col-span-2 font-mono break-all">
+                              <div class="flex items-center space-x-2">
+                                  <span class="text-indigo-600">{tx.Hash}</span>
+                                  <button class="text-gray-400 hover:text-gray-600">
+                                      <i data-lucide="copy" class="h-4 w-4"></i>
+                                  </button>
+                              </div>
+                          </div>
+                      </div>
 
-        <!-- Transaction Card -->
-        <div class="bg-white rounded-lg shadow-sm border">
-            <!-- Overview Section -->
-            <div class="p-6 border-b">
-                <div class="space-y-4">
-                    <!-- Transaction Hash -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="text-gray-600">Transaction Hash:</div>
-                        <div class="md:col-span-2 font-mono break-all">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-indigo-600">{tx.Hash}</span>
-                                <button class="text-gray-400 hover:text-gray-600">
-                                    <i data-lucide="copy" class="h-4 w-4"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                      <!-- Status -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="text-gray-600">Status:</div>
+                          <div class="md:col-span-2 flex items-center space-x-2">
+                              <i data-lucide="check-circle" class="h-5 w-5 text-green-500"></i>
+                              if tx.Success {
+                                <span class="text-green-700">Success</span>
+                              } else {
+                                <span class="text-red-700">Failed</span>
+                              }
+                          </div>
+                      </div>
 
-                    <!-- Status -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="text-gray-600">Status:</div>
-                        <div class="md:col-span-2 flex items-center space-x-2">
-                            <i data-lucide="check-circle" class="h-5 w-5 text-green-500"></i>
-                            if tx.Success {
-                              <span class="text-green-700">Success</span>
-                            } else {
-                              <span class="text-red-700">Failed</span>
-                            }
-                        </div>
-                    </div>
+                      <!-- Block -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="text-gray-600">Block:</div>
+                          <div class="md:col-span-2">
+                              <a href={templ.SafeURL("/block/" + strconv.FormatUint(tx.BlockNumber, 10))} class="text-indigo-600 hover:text-indigo-700">{strconv.FormatUint(tx.BlockNumber, 10)}</a>
+                          </div>
+                      </div>
 
-                    <!-- Block -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="text-gray-600">Block:</div>
-                        <div class="md:col-span-2">
-                            <a href={templ.SafeURL("/block/" + strconv.FormatUint(tx.BlockNumber, 10))} class="text-indigo-600 hover:text-indigo-700">{strconv.FormatUint(tx.BlockNumber, 10)}</a>
-                        </div>
-                    </div>
+                      <!-- Timestamp -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="text-gray-600">Timestamp:</div>
+                          <div class="md:col-span-2 text-gray-900">
+                              {helpers.FormatTimestamp(tx.Timestamp)}
+                          </div>
+                      </div>
+                  </div>
+              </div>
 
-                    <!-- Timestamp -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="text-gray-600">Timestamp:</div>
-                        <div class="md:col-span-2 text-gray-900">
-                            {helpers.FormatTimestamp(tx.Timestamp)}
-                        </div>
-                    </div>
-                </div>
-            </div>
+              <!-- From/To Section -->
+              <div class="p-6 border-b">
+                  <div class="space-y-4">
+                      <!-- From -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="text-gray-600">From:</div>
+                          <div class="md:col-span-2">
+                              <div class="flex items-center space-x-2">
+                                  <a href={templ.SafeURL("/account/" + tx.From)} class="text-indigo-600 hover:text-indigo-700 font-mono">{tx.From}</a>
+                                  <button class="text-gray-400 hover:text-gray-600">
+                                      <i data-lucide="copy" class="h-4 w-4"></i>
+                                  </button>
+                              </div>
+                          </div>
+                      </div>
 
-            <!-- From/To Section -->
-            <div class="p-6 border-b">
-                <div class="space-y-4">
-                    <!-- From -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="text-gray-600">From:</div>
-                        <div class="md:col-span-2">
-                            <div class="flex items-center space-x-2">
-                                <a href={templ.SafeURL("/tx/" + tx.From)} class="text-indigo-600 hover:text-indigo-700 font-mono">{tx.From}</a>
-                                <button class="text-gray-400 hover:text-gray-600">
-                                    <i data-lucide="copy" class="h-4 w-4"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                      <!-- To -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="text-gray-600">To:</div>
+                          <div class="md:col-span-2">
+                              <div class="flex items-center space-x-2">
+                                  <a href={templ.SafeURL("/account/" + tx.To)} class="text-indigo-600 hover:text-indigo-700 font-mono">{tx.To}</a>
+                                  <button class="text-gray-400 hover:text-gray-600">
+                                      <i data-lucide="copy" class="h-4 w-4"></i>
+                                  </button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
 
-                    <!-- To -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="text-gray-600">To:</div>
-                        <div class="md:col-span-2">
-                            <div class="flex items-center space-x-2">
-                                <a href={templ.SafeURL("/tx/" + tx.To)} class="text-indigo-600 hover:text-indigo-700 font-mono">{tx.To}</a>
-                                <button class="text-gray-400 hover:text-gray-600">
-                                    <i data-lucide="copy" class="h-4 w-4"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+              <!-- Value Section -->
+              <div class="p-6 border-b">
+                  <div class="space-y-4">
+                      <!-- Value -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="text-gray-600">Value:</div>
+                          <div class="md:col-span-2">
+                              <div class="flex items-center space-x-2">
+                                  <span class="text-gray-900 font-medium">{helpers.FormatEthValue(tx.Value)} ETH</span>
+                                  // <span class="text-gray-500">($1,234.56)</span>
+                              </div>
+                          </div>
+                      </div>
 
-            <!-- Value Section -->
-            <div class="p-6 border-b">
-                <div class="space-y-4">
-                    <!-- Value -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="text-gray-600">Value:</div>
-                        <div class="md:col-span-2">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-gray-900 font-medium">{helpers.FormatEthValue(tx.Value)} ETH</span>
-                                // <span class="text-gray-500">($1,234.56)</span>
-                            </div>
-                        </div>
-                    </div>
+                      <!-- Transaction Fee -->
+                      // <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      //     <div class="text-gray-600">Transaction Fee:</div>
+                      //     <div class="md:col-span-2">
+                      //         <div class="flex items-center space-x-2">
+                      //             <span class="text-gray-900">0.000421 ETH</span>
+                      //             <span class="text-gray-500">($0.89)</span>
+                      //         </div>
+                      //     </div>
+                      // </div>
 
-                    <!-- Transaction Fee -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="text-gray-600">Transaction Fee:</div>
-                        <div class="md:col-span-2">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-gray-900">0.000421 ETH</span>
-                                <span class="text-gray-500">($0.89)</span>
-                            </div>
-                        </div>
-                    </div>
+                      <!-- Gas Price -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="text-gray-600">Gas Price:</div>
+                          <div class="md:col-span-2">
+                              <div class="flex items-center space-x-2">
+                                  <span class="text-gray-900">{helpers.FormatWeiValue(tx.GasPrice)} Gwei</span>
+                                  <span class="text-gray-500">(helpers.FormatEthValue(tx.GasPrice) ETH)</span>
+                              </div>
+                          </div>
+                      </div>
 
-                    <!-- Gas Price -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="text-gray-600">Gas Price:</div>
-                        <div class="md:col-span-2">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-gray-900">25 Gwei</span>
-                                <span class="text-gray-500">(0.000000025 ETH)</span>
-                            </div>
-                        </div>
-                    </div>
+                      <!-- Gas Limit & Usage -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="text-gray-600">Gas Limit & Usage:</div>
+                          <div class="md:col-span-2">
+                              <span class="text-gray-900">{strconv.FormatUint(tx.GasLimit, 10)} | {strconv.FormatUint(tx.GasUsed, 10)} ({strconv.FormatUint(((tx.GasUsed / tx.GasLimit) * 100), 10)})%</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
 
-                    <!-- Gas Limit & Usage -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="text-gray-600">Gas Limit & Usage:</div>
-                        <div class="md:col-span-2">
-                            <span class="text-gray-900">{strconv.FormatUint(tx.GasLimit, 10)} | {strconv.FormatUint(tx.GasUsed, 10)} ({strconv.FormatUint(((tx.GasUsed / tx.GasLimit) * 100), 10)})%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+              <!-- More Details -->
+              <div class="p-6">
+                  <div class="space-y-4">
+                      <!-- Nonce -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="text-gray-600">Nonce:</div>
+                          <div class="md:col-span-2">
+                              <span class="text-gray-900">{strconv.FormatUint(tx.Nonce, 10)}</span>
+                          </div>
+                      </div>
 
-            <!-- More Details -->
-            <div class="p-6">
-                <div class="space-y-4">
-                    <!-- Nonce -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="text-gray-600">Nonce:</div>
-                        <div class="md:col-span-2">
-                            <span class="text-gray-900">{strconv.FormatUint(tx.Nonce, 10)}</span>
-                        </div>
-                    </div>
-
-                    <!-- Input Data -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="text-gray-600">Input Data:</div>
-                        <div class="md:col-span-2">
-                            <div class="font-mono bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto">
-                                0x
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-</div>
+                      <!-- Input Data -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="text-gray-600">Input Data:</div>
+                          <div class="md:col-span-2">
+                              <div class="font-mono bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto">
+                                  0x
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </main>
+    </div>
+    <!-- Footer -->
+    @components.Footer()
   }
 }

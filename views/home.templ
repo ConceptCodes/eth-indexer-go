@@ -4,13 +4,14 @@ import (
 	"strconv"
 
   "github.com/conceptcodes/eth-indexer-go/internal/models"
-  "github.com/conceptcodes/eth-indexer-go/internal/helpers"
+	"github.com/conceptcodes/eth-indexer-go/views/components"
 )
 
 templ Home(data models.HomeData) {
   @Page() {
     <!-- Navigation -->
-    // @Nav()
+    @components.Nav()
+
     <!-- Hero Section -->
     <section class="py-12 border-b bg-gray-50">
         <div class="container mx-auto px-4">
@@ -28,7 +29,8 @@ templ Home(data models.HomeData) {
                         <i data-lucide="clock" class="h-5 w-5 text-gray-500"></i>
                         <h3 class="text-sm font-medium text-gray-500">AVG BLOCK TIME</h3>
                     </div>
-                    <p class="text-2xl font-bold">12.03s</p>
+                    <p class="text-2xl font-bold">
+                    {strconv.FormatUint(data.AvgBlockTime, 10)}s</p>
                 </div>
                 <div class="bg-white p-6 rounded-lg border">
                     <div class="flex items-center space-x-2 mb-2">
@@ -45,111 +47,11 @@ templ Home(data models.HomeData) {
     <section class="py-12">
         <div class="container mx-auto px-4">
             <h2 class="text-2xl font-bold mb-6">Recent Transactions</h2>
-            <div class="border rounded-lg overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="border-b bg-gray-50">
-                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Transaction Hash</th>
-                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Block</th>
-                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">From</th>
-                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">To</th>
-                            <th class="px-6 py-3 text-right text-sm font-medium text-gray-500">Value (ETH)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        for _, tx := range data.Transactions {
-                          <tr class="border-b hover:bg-gray-50">
-                            <td class="px-6 py-4">
-                              <div class="flex items-center space-x-2">
-                                <i data-lucide="arrow-up-right" class="h-4 w-4 text-gray-500"></i>
-                                <a href={templ.SafeURL("/tx/" + tx.Hash)} class="text-blue-500 hover:text-blue-600">{helpers.TruncateHash(tx.Hash)}</a>
-                              </div>
-                            </td>
-                            <td class="px-6 py-4">{strconv.FormatUint(tx.BlockNumber, 10)}</td>
-                            <td class="px-6 py-4">
-                              <a href={templ.SafeURL("/address/" + tx.From)} class="text-blue-500 hover:text-blue-600">{helpers.TruncateHash(tx.From)}</a>
-                            </td>
-                            <td class="px-6 py-4">
-                              <a href={templ.SafeURL("/address/" + tx.To)} class="text-blue-500 hover:text-blue-600">{helpers.TruncateHash(tx.To)}</a>
-                            </td>
-                            <td class="px-6 py-4 text-right">{helpers.FormatEthValue(tx.Value)}</td>
-                          </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+            @components.TransactionTable(data.Transactions, true, false)
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="border-t py-12 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="font-bold mb-4">Company</h3>
-                    <ul class="space-y-2">
-                        <li>
-                            <a href="#" class="text-sm text-gray-500 hover:text-gray-900">
-                                About Us
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-sm text-gray-500 hover:text-gray-900">
-                                Contact Us
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-bold mb-4">Community</h3>
-                    <ul class="space-y-2">
-                        <li>
-                            <a href="#" class="text-sm text-gray-500 hover:text-gray-900">
-                                API Documentation
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-sm text-gray-500 hover:text-gray-900">
-                                Network Status
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-bold mb-4">Products</h3>
-                    <ul class="space-y-2">
-                        <li>
-                            <a href="#" class="text-sm text-gray-500 hover:text-gray-900">
-                                Explorer
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-sm text-gray-500 hover:text-gray-900">
-                                Charts
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-sm text-gray-500 hover:text-gray-900">
-                                API Services
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-bold mb-4">Connect</h3>
-                    <ul class="space-y-2">
-                        <li>
-                            <a href="https://github.com/conceptcodes/eth-indexer-go" class="text-sm text-gray-500 hover:text-gray-900">
-                                GitHub
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="mt-8 pt-8 border-t text-center text-sm text-gray-500">
-                <p>© <script>document.write(new Date().getFullYear() + " ")</script> ConceptCodes, LLC. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    @components.Footer()
   }
 }

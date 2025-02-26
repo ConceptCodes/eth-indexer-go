@@ -13,6 +13,7 @@ type TransactionRepository interface {
 	CreateAll(transactions []*models.Transaction) error
 	Count() (int64, error)
 	Recent(limit int) ([]*models.Transaction, error)
+	FindByBlockNumber(blockNumber uint64, pageNumber, pageSize int) ([]*models.Transaction, error)
 }
 
 type GormTransactionRepository struct {
@@ -49,5 +50,11 @@ func (r *GormTransactionRepository) Count() (int64, error) {
 func (r *GormTransactionRepository) Recent(limit int) ([]*models.Transaction, error) {
 	var transactions []*models.Transaction
 	err := r.db.Order("timestamp desc").Limit(limit).Find(&transactions).Error
+	return transactions, err
+}
+
+func (r *GormTransactionRepository) FindByBlockNumber(blockNumber uint64, pageNumber, pageSize int) ([]*models.Transaction, error) {
+	var transactions []*models.Transaction
+	err := r.db.Where("block_number = ?", blockNumber).Offset((pageNumber - 1) * pageSize).Limit(pageSize).Find(&transactions).Error
 	return transactions, err
 }

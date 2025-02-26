@@ -1,0 +1,100 @@
+package components
+
+import (
+  "github.com/conceptcodes/eth-indexer-go/internal/models"
+  "github.com/conceptcodes/eth-indexer-go/internal/helpers"
+	"strconv"
+)
+
+templ TransactionTable(txs []models.SimpleTransaction, showBlockNumber, pagination bool) {
+  <div class="overflow-x-auto">
+    <table class="w-full">
+        <thead>
+            <tr class="border-b">
+                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Transaction Hash</th>
+                if showBlockNumber {
+                  <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Block</th>
+                }
+                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">From</th>
+                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">To</th>
+                <th class="px-6 py-3 text-right text-sm font-medium text-gray-500">Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            for _, tx := range txs {
+              <tr class="border-b hover:bg-gray-50">
+                <td class="px-6 py-4">
+                    <a href={templ.SafeURL("/tx/" + tx.Hash)} class="text-indigo-600 hover:text-indigo-700 font-mono">
+                    {helpers.TruncateHash(tx.Hash)}
+                    </a>
+                </td>
+                if showBlockNumber {
+                  <td class="px-6 py-4">{strconv.FormatUint(tx.BlockNumber, 10)}</td>
+                }
+                <td class="px-6 py-4">
+                    <a href={templ.SafeURL("/address/" + tx.From)} class="text-indigo-600 hover:text-indigo-700 font-mono">
+                    {helpers.TruncateHash(tx.From)}
+                    </a>
+                </td>
+                <td class="px-6 py-4">
+                    <a href={templ.SafeURL("/address/" + tx.To)} class="text-indigo-600 hover:text-indigo-700 font-mono">
+                    {helpers.TruncateHash(tx.To)}
+                    </a>
+                </td>
+                <td class="px-6 py-4 text-right">
+                 {helpers.FormatEthValue(tx.Value)} ETH</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+  </div>
+<!-- Pagination -->
+  if pagination {
+    <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6">
+        <!-- Items per page -->
+        <div class="flex items-center space-x-2">
+            <span class="text-sm text-gray-500">Show</span>
+            <select class="border rounded px-2 py-1 text-sm">
+                <option>25</option>
+                <option>50</option>
+                <option>100</option>
+            </select>
+            <span class="text-sm text-gray-500">entries</span>
+        </div>
+
+        <!-- Page info -->
+        <div class="text-sm text-gray-500">
+            Showing 1 to 25 of {strconv.FormatInt(int64(len(txs)), 10)} transactions
+        </div>
+
+        <!-- Pagination controls -->
+          <div class="flex items-center space-x-2">
+              <button class="px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                  <i data-lucide="chevrons-left" class="h-4 w-4"></i>
+                  <span class="hidden sm:inline">First</span>
+              </button>
+              <button class="px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                  <i data-lucide="chevron-left" class="h-4 w-4"></i>
+                  <span class="hidden sm:inline">Previous</span>
+              </button>
+              
+              <div class="flex items-center space-x-1">
+                  <button class="px-3 py-1 border rounded bg-indigo-50 text-indigo-600 font-medium">1</button>
+                  <button class="px-3 py-1 border rounded hover:bg-gray-50">2</button>
+                  <button class="px-3 py-1 border rounded hover:bg-gray-50">3</button>
+                  <span class="px-2">...</span>
+                  <button class="px-3 py-1 border rounded hover:bg-gray-50">6</button>
+              </div>
+
+              <button class="px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1">
+                  <span class="hidden sm:inline">Next</span>
+                  <i data-lucide="chevron-right" class="h-4 w-4"></i>
+              </button>
+              <button class="px-3 py-1 border rounded hover:bg-gray-50 text-gray-500 flex items-center space-x-1">
+                  <span class="hidden sm:inline">Last</span>
+                  <i data-lucide="chevrons-right" class="h-4 w-4"></i>
+              </button>
+          </div>
+    </div>
+  }
+}

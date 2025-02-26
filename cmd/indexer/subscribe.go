@@ -8,18 +8,18 @@ import (
 	"sync"
 	"time"
 	"unicode/utf8"
+	"gorm.io/gorm"
+	"github.com/rs/zerolog"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"gorm.io/gorm"
 
 	"github.com/conceptcodes/eth-indexer-go/config"
 	"github.com/conceptcodes/eth-indexer-go/internal/models"
 	"github.com/conceptcodes/eth-indexer-go/internal/repository"
 
-	"github.com/rs/zerolog"
 )
 
 var blockQueue = make(chan uint64, 100)
@@ -91,7 +91,7 @@ func (s *Subscriber) processHistoricalBlocks(fromBlock, toBlock uint64) {
 	blockQueue := make(chan uint64, 10)
 	var wg sync.WaitGroup
 
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
@@ -117,7 +117,7 @@ func (s *Subscriber) SubscribeNewBlocks() {
 	}
 	s.log.Info().Msg("Subscribed to new block headers...")
 
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		go func() {
 			for blockNumber := range blockQueue {
 				s.processBlock(blockNumber)
@@ -151,7 +151,7 @@ func (s *Subscriber) processBlock(blockNumber uint64) {
 	// add a delay to avoid overwhelming the node
 	time.Sleep(3 * time.Second)
 
-	for i := 0; i < maxRetries; i++ {
+	for i := range maxRetries {
 		block, err = s.client.BlockByNumber(s.ctx, big.NewInt(int64(blockNumber)))
 		if err == nil && block != nil {
 			break
@@ -180,6 +180,10 @@ func (s *Subscriber) storeBlock(block *types.Block) {
 		Miner:      block.Coinbase().Hex(),
 		Timestamp:  block.Time(),
 		TxHash:     block.TxHash().Hex(),
+		Difficulty: block.Difficulty().Int64(),
+		GasUsed:    block.GasUsed(),
+		GasLimit:   block.GasLimit(),
+		BaseFee:    block.BaseFee().String(),
 	}
 
 	if err := s.blockRepo.Create(&blockData); err != nil {
@@ -248,6 +252,7 @@ func (s *Subscriber) processTransactions(block *types.Block) {
 			Timestamp:   block.Time(),
 			Success:     types.ReceiptStatusSuccessful == receipt.Status,
 		}
+
 
 		transactions = append(transactions, &transaction)
 	}

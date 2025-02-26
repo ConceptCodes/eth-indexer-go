@@ -43,6 +43,10 @@ type SimpleBlock struct {
 	Miner        string              `json:"miner"`
 	Timestamp    uint64              `json:"timestamp"`
 	Transactions []SimpleTransaction `json:"transactions"`
+	Difficulty   int64               `json:"difficulty"`
+	GasUsed      uint64              `json:"gas_used"`
+	GasLimit     uint64              `json:"gas_limit"`
+	BaseFee      string              `json:"base_fee"`
 }
 
 type SimpleEvent struct {

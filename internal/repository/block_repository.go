@@ -11,6 +11,7 @@ type BlockRepository interface {
 	Delete(id string) error
 	FindByBlockNumber(blockNumber string) (*models.Block, error)
 	Count() (int64, error)
+	GetAll() ([]models.Block, error)
 }
 
 type GormBlockRepository struct {
@@ -39,4 +40,10 @@ func (r *GormBlockRepository) Count() (int64, error) {
 	var count int64
 	err := r.db.Model(&models.Block{}).Count(&count).Error
 	return count, err
+}
+
+func (r *GormBlockRepository) GetAll() ([]models.Block, error) {
+	var blocks []models.Block
+	err := r.db.Find(&blocks).Error
+	return blocks, err
 }

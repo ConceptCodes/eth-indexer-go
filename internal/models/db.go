@@ -18,6 +18,10 @@ type Block struct {
 	Timestamp    uint64
 	TxHash       string
 	Transactions []Transaction `gorm:"foreignKey:BlockNumber;references:Number"`
+	BaseFee      string
+	GasUsed      uint64
+	GasLimit     uint64
+	Difficulty   int64
 }
 
 func (b *Block) SimpleBlock() SimpleBlock {
@@ -30,6 +34,10 @@ func (b *Block) SimpleBlock() SimpleBlock {
 		Miner:        b.Miner,
 		Timestamp:    b.Timestamp,
 		Transactions: SimplifyTransactions(b.Transactions),
+		Difficulty:   b.Difficulty,
+		GasUsed:      b.GasUsed,
+		GasLimit:     b.GasLimit,
+		BaseFee:      b.BaseFee,
 	}
 }
 

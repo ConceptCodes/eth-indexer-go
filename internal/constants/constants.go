@@ -19,6 +19,7 @@ const (
 	InternalServerError = "eth-indx-500"
 
 	DefaultRedisTtl = 10 * time.Minute
+	DefaultPageSize = 25
 
 	EntityNotFound             = "%s with %s %s does not exist."
 	GetEntityByIdMessage       = "Found %s with id %s."
@@ -48,7 +49,7 @@ const (
 	VerifyEmailEndpoint    = ApiPrefix + "/auth/verify-email"
 	ResetPasswordEndpoint  = ApiPrefix + "/auth/reset-password"
 
-	GetTransactionsByHashEndpoint      = ApiPrefix + "/tx/{hash:0x[0-9a-fA-F]{64}}"
-	GetBlockByNumberEndpoint           = ApiPrefix + "/block/{blockNumber:[0-9]+}"
+	GetTransactionsByHashEndpoint      = ApiPrefix + TransactionViewEndpoint
+	GetBlockByNumberEndpoint           = ApiPrefix + BlockViewEndpoint
 	GetEventsByContractAddressEndpoint = ApiPrefix + "/events/{address:0x[0-9a-fA-F]{40}}"
 )
