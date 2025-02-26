@@ -12,6 +12,7 @@ type BlockData struct {
 	Txs        []SimpleTransaction
 	PageNumber int64
 	TotalPages int64
+	TxCount    int64
 }
 
 type AccountData struct {

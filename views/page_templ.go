@@ -37,7 +37,7 @@ func Page() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</body><script>\n        lucide.createIcons();\n    </script></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</body><script>\n        lucide.createIcons();\n\n        function copyToClipboard(text) {\n          navigator.clipboard.writeText(text).then(() => {\n            console.log('Copied to clipboard');\n          }).catch((error) => {\n            console.error('Failed to copy to clipboard', error);\n          });\n        }\n    </script></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -138,6 +138,7 @@ func (h *ViewHandler) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 		Txs:        simpleTxs,
 		PageNumber: int64(pageInt),
 		TotalPages: int64(totalPages),
+		TxCount:    int64(len(txs)),
 	}
 
 	views.Block(data).Render(r.Context(), w)

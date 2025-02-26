@@ -66,20 +66,43 @@ templ Block(data models.BlockData) {
                           <div class="md:col-span-2">
                               <div class="flex items-center space-x-2">
                                   <span class="font-mono text-indigo-600 break-all">{data.Block.Hash}</span>
-                                  <button class="text-gray-400 hover:text-gray-600">
+                                  <button class="text-gray-400 hover:text-gray-600"  onClick={templ.JSFuncCall("copyToClipboard", data.Block.Hash)}>
                                       <i data-lucide="copy" class="h-4 w-4"></i>
                                   </button>
                               </div>
                           </div>
                       </div>
 
+                      <!-- Parent Hash -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="text-gray-600">Parent Hash:</div>
+                          <div class="md:col-span-2">
+                              <div class="flex items-center space-x-2">
+                                  <span class="font-mono text-indigo-600 break-all">{data.Block.ParentHash}</span>
+                                  <button class="text-gray-400 hover:text-gray-600"  onClick={templ.JSFuncCall("copyToClipboard", data.Block.ParentHash)}>
+                                      <i data-lucide="copy" class="h-4 w-4"></i>
+                                  </button>
+                              </div>
+                          </div>
+                      </div>
+
+
                       <!-- Timestamp -->
                       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div class="text-gray-600">Timestamp:</div>
                           <div class="md:col-span-2">
-                              2 mins ago (Feb 25, 2024 12:45:32 PM UTC)
+                              # mins ago ({helpers.FormatTimestamp(data.Block.Timestamp)})
                           </div>
                       </div>
+
+                      <!-- Transaction Count -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="text-gray-600">Transactions:</div>
+                          <div class="md:col-span-2">
+                              {strconv.FormatInt(data.TxCount, 10)} Transactions
+                          </div>
+                      </div>
+
                   </div>
               </div>
 
@@ -91,7 +114,7 @@ templ Block(data models.BlockData) {
                           <div class="text-gray-600">Mined by:</div>
                           <div class="md:col-span-2">
                               <div class="flex items-center space-x-2">
-                                  <a href="#" class="text-indigo-600 hover:text-indigo-700 font-mono">{data.Block.Miner}</a>
+                                  <a href={templ.SafeURL("/account/" + data.Block.Miner)} class="text-indigo-600 hover:text-indigo-700 font-mono">{data.Block.Miner}</a>
                                   // <span class="px-2 py-1 bg-orange-100 text-orange-700 rounded text-sm">Ethermine</span>
                               </div>
                           </div>

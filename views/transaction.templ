@@ -8,7 +8,7 @@ import (
   "github.com/conceptcodes/eth-indexer-go/views/components"
 )
 
-templ Transaction(tx models.Transaction) {
+templ Transaction(tx *models.Transaction) {
   @Page() {
     <div class="bg-gray-50">
       <!-- Navigation -->
@@ -39,7 +39,7 @@ templ Transaction(tx models.Transaction) {
                           <div class="md:col-span-2 font-mono break-all">
                               <div class="flex items-center space-x-2">
                                   <span class="text-indigo-600">{tx.Hash}</span>
-                                  <button class="text-gray-400 hover:text-gray-600">
+                                  <button class="text-gray-400 hover:text-gray-600" onClick={templ.JSFuncCall("copyToClipboard", tx.Hash)}>
                                       <i data-lucide="copy" class="h-4 w-4"></i>
                                   </button>
                               </div>
@@ -86,7 +86,7 @@ templ Transaction(tx models.Transaction) {
                           <div class="md:col-span-2">
                               <div class="flex items-center space-x-2">
                                   <a href={templ.SafeURL("/account/" + tx.FromAddress)} class="text-indigo-600 hover:text-indigo-700 font-mono">{tx.FromAddress}</a>
-                                  <button class="text-gray-400 hover:text-gray-600">
+                                  <button class="text-gray-400 hover:text-gray-600" onClick={templ.JSFuncCall("copyToClipboard", tx.FromAddress)}>
                                       <i data-lucide="copy" class="h-4 w-4"></i>
                                   </button>
                               </div>
@@ -99,7 +99,7 @@ templ Transaction(tx models.Transaction) {
                           <div class="md:col-span-2">
                               <div class="flex items-center space-x-2">
                                   <a href={templ.SafeURL("/account/" + tx.ToAddress)} class="text-indigo-600 hover:text-indigo-700 font-mono">{tx.ToAddress}</a>
-                                  <button class="text-gray-400 hover:text-gray-600">
+                                  <button class="text-gray-400 hover:text-gray-600" onClick={templ.JSFuncCall("copyToClipboard", tx.ToAddress)}>
                                       <i data-lucide="copy" class="h-4 w-4"></i>
                                   </button>
                               </div>
@@ -117,21 +117,21 @@ templ Transaction(tx models.Transaction) {
                           <div class="md:col-span-2">
                               <div class="flex items-center space-x-2">
                                   <span class="text-gray-900 font-medium">{helpers.FormatEthValue(tx.Value)} ETH</span>
-                                  // <span class="text-gray-500">($1,234.56)</span>
+                                  <span class="text-gray-500">(${helpers.GetEthPriceInUsd(tx.Value)})</span>
                               </div>
                           </div>
                       </div>
 
                       <!-- Transaction Fee -->
-                      // <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      //     <div class="text-gray-600">Transaction Fee:</div>
-                      //     <div class="md:col-span-2">
-                      //         <div class="flex items-center space-x-2">
-                      //             <span class="text-gray-900">0.000421 ETH</span>
-                      //             <span class="text-gray-500">($0.89)</span>
-                      //         </div>
-                      //     </div>
-                      // </div>
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="text-gray-600">Transaction Fee:</div>
+                          <div class="md:col-span-2">
+                              <div class="flex items-center space-x-2">
+                                  <span class="text-gray-900">{tx.Fee} ETH</span>
+                                  <span class="text-gray-500">(${helpers.GetEthPriceInUsd(tx.Fee)})</span>
+                              </div>
+                          </div>
+                      </div>
 
                       <!-- Gas Price -->
                       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">

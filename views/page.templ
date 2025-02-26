@@ -17,6 +17,14 @@ templ Page() {
       </body>
       <script>
         lucide.createIcons();
+
+        function copyToClipboard(text) {
+          navigator.clipboard.writeText(text).then(() => {
+            console.log('Copied to clipboard');
+          }).catch((error) => {
+            console.error('Failed to copy to clipboard', error);
+          });
+        }
     </script>
 	</html>
 }
