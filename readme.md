@@ -27,7 +27,9 @@ This project was built purely for fun and experimentation. If you're interested 
 - [Htmx](https://htmx.org/)
 ---
 
-<img src="https://i.imgur.com/N0CHCSd.gif" alt="Demo" />
+<center>
+  <img src="/public/demo.gif?raw=true" alt="Demo" />
+</center>
 
 ## Roadmap
 - [x] Add authentication for the API
