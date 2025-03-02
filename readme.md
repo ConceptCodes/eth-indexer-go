@@ -15,11 +15,11 @@ This project was built purely for fun and experimentation. If you're interested 
 
 ## Tech Stack
 - [Golang](https://golang.org/)
-  - [Gorilla Mux](github.com/gorilla/mux)
-  - [Gorm](github.com/go-gorm/gorm)
-  - [ZeroLog](github.com/rs/zerolog/log)
-  - [Ethclient](github.com/ethereum/go-ethereum/ethclient)
-  - [Templ](github.com/a-h/templ) w/ [Tailwindcss](https://tailwindcss.com/)
+  - [Gorilla Mux](https://github.com/gorilla/mux)
+  - [Gorm](https://github.com/go-gorm/gorm)
+  - [ZeroLog](https://github.com/rs/zerolog)
+  - [Ethclient](https://github.com/ethereum/go-ethereum)
+  - [Templ](https://github.com/a-h/templ) w/ [Tailwindcss](https://tailwindcss.com/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
